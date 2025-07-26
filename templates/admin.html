@@ -316,6 +316,31 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
+        .header-image {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .version-info {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 500;
+            z-index: 1000;
+        }
+
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -366,6 +391,11 @@
         <div class="header">
             <h2>기도제목 관리</h2>
             <div class="week-info">{{ current_week_label }}</div>
+        </div>
+
+        <!-- 헤더 이미지 추가 -->
+        <div class="header-image">
+            <img src="/static/images/DreamPlus3.png" alt="기도제목 관리" class="header-img" onerror="this.style.display='none'">
         </div>
 
         <div class="filters">
@@ -573,8 +603,11 @@
                         </div>
                     {% endfor %}
                 {% endfor %}
-    {% endfor %}
+                {% endfor %}
         </div>
     </div>
+    
+    <!-- 버전 정보 -->
+    <div class="version-info">v1.0</div>
 </body>
 </html>

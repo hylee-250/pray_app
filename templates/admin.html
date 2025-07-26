@@ -682,11 +682,8 @@
                                     prayers.forEach((prayer, index) => {
                                         textToCopy += `${prayer.name}\n`;
                                         textToCopy += `${prayer.content}\n`;
-                                        if (index < prayers.length - 1) {
-                                            textToCopy += `- ${index + 1}\n`;
-                                        }
                                     });
-                                    textToCopy += `- ${prayers.length}\n\n`;
+                                    textToCopy += '\n';
                                 }
                             }
                         }
@@ -759,9 +756,16 @@
                     }
                 }
 
-                function editPrayer(prayerId, name, leader, cellGroup, content) {
+                function editPrayerFromData(button) {
                     // 모바일에서 스크롤 방지
                     document.body.style.overflow = 'hidden';
+                    
+                    // 데이터 속성에서 값 가져오기
+                    const prayerId = button.getAttribute('data-prayer-id');
+                    const name = button.getAttribute('data-name');
+                    const leader = button.getAttribute('data-leader');
+                    const cellGroup = button.getAttribute('data-cell-group');
+                    const content = button.getAttribute('data-content');
                     
                     // 폼 요소들 가져오기
                     const editPrayerId = document.getElementById('editPrayerId');
@@ -790,6 +794,20 @@
                         // 모바일에서 모달이 화면 중앙에 오도록
                         modal.scrollTop = 0;
                     }
+                }
+
+                function editPrayer(prayerId, name, leader, cellGroup, content) {
+                    // 기존 함수 유지 (호환성)
+                    editPrayerFromData({
+                        getAttribute: function(attr) {
+                            if (attr === 'data-prayer-id') return prayerId;
+                            if (attr === 'data-name') return name;
+                            if (attr === 'data-leader') return leader;
+                            if (attr === 'data-cell-group') return cellGroup;
+                            if (attr === 'data-content') return content;
+                            return '';
+                        }
+                    });
                 }
 
                 function updateEditLeaders() {
@@ -899,7 +917,15 @@
                                 <div class="prayer-text">{{ p.content | replace('\n', '<br>') | safe }}</div>
                             </div>
                             <div class="action-buttons">
-                                <button class="edit-btn" onclick="editPrayer({{ p.id }}, '{{ p.name | replace("'", "\\'") }}', '{{ p.leader | replace("'", "\\'") }}', '{{ p.cell_group | replace("'", "\\'") }}', '{{ p.content | replace("'", "\\'") | replace("\n", "\\n") }}')" ontouchstart="editPrayer({{ p.id }}, '{{ p.name | replace("'", "\\'") }}', '{{ p.leader | replace("'", "\\'") }}', '{{ p.cell_group | replace("'", "\\'") }}', '{{ p.content | replace("'", "\\'") | replace("\n", "\\n") }}')" style="touch-action: manipulation;">✏️ 수정</button>
+                                <button class="edit-btn" 
+                                    data-prayer-id="{{ p.id }}"
+                                    data-name="{{ p.name }}"
+                                    data-leader="{{ p.leader }}"
+                                    data-cell-group="{{ p.cell_group }}"
+                                    data-content="{{ p.content }}"
+                                    onclick="editPrayerFromData(this)" 
+                                    ontouchstart="editPrayerFromData(this)" 
+                                    style="touch-action: manipulation;">✏️ 수정</button>
                                 <button class="delete-btn" onclick="deletePrayer({{ p.id }})" ontouchstart="deletePrayer({{ p.id }})">🗑️ 삭제</button>
                             </div>
                         </div>

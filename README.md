@@ -90,8 +90,11 @@ DATABASE_URL=postgresql://username:password@host:5432/dbname
 
 ### 4. 빌드 명령어
 ```bash
-pip install -r requirements.txt
+chmod +x build.sh
+./build.sh
 ```
+
+또는 Render 대시보드에서 빌드 명령어를 `./build.sh`로 설정
 
 ### 5. 시작 명령어
 ```bash

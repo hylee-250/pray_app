@@ -96,7 +96,7 @@ chmod +x build.sh
 
 또는 Render 대시보드에서 빌드 명령어를 `./build.sh`로 설정
 
-**참고**: FastAPI 0.95.2 + Pydantic 1.10.7 조합으로 Rust 의존성 없이 안정적으로 배포됩니다.
+**참고**: FastAPI 0.95.2 + Pydantic 1.10.13 + SQLAlchemy 1.4.49 조합으로 Rust 의존성 없이 안정적으로 배포됩니다.
 
 ### 5. 시작 명령어
 ```bash
@@ -112,9 +112,9 @@ AssertionError: Class <class 'sqlalchemy.sql.elements.SQLCoreOperations'> direct
 ```
 
 **해결 방법:**
-1. `requirements.txt`에서 SQLAlchemy 버전을 2.0.19로 고정
-2. `typing-extensions==4.8.0` 추가
-3. `runtime.txt`에 Python 3.11.7 명시
+1. `requirements.txt`에서 SQLAlchemy 버전을 1.4.49로 고정 (안정적)
+2. `runtime.txt`에 Python 3.11.7 명시
+3. FastAPI 0.95.2 + Pydantic 1.10.13 조합 사용
 
 ### FastAPI/Pydantic 버전 호환성 문제 해결
 Render 배포 시 다음과 같은 오류가 발생할 수 있습니다:
@@ -124,10 +124,11 @@ maturin failed
 ```
 
 **해결 방법:**
-1. FastAPI 0.95.2 + Pydantic 1.10.7 사용 (Rust 의존성 없음)
+1. FastAPI 0.95.2 + Pydantic 1.10.13 사용 (Rust 의존성 없음)
 2. uvicorn 0.22.0 사용
-3. `psycopg2` 사용 (C 라이브러리만 필요)
-4. `build.sh`에서 `libpq-dev` 설치
+3. SQLAlchemy 1.4.49 사용 (안정적)
+4. `psycopg2` 사용 (C 라이브러리만 필요)
+5. `build.sh`에서 `libpq-dev` 설치
 
 ### 데이터베이스 선택
 - **개발/테스트**: SQLite 사용 (간편함)

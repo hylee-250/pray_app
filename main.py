@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Form, Query
 from fastapi.responses import RedirectResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from database import SessionLocal, engine
-from models import Base, Prayer, CellGroup, Leader
+from models import Base, Prayer
 from datetime import datetime, timedelta
 from collections import defaultdict
 import openpyxl

@@ -85,8 +85,13 @@ def login(request: Request, password: str = Form(...)):
         # 로그인 성공 시 세션 설정 (간단한 쿠키 기반)
         response = RedirectResponse(url="/admin", status_code=303)
         response.set_cookie(
-            key="admin_authenticated", value="true", max_age=3600
-        )  # 1시간
+            key="admin_authenticated",
+            value="true",
+            max_age=1800,  # 30분으로 단축
+            httponly=True,
+            secure=False,  # 개발환경에서는 False, 배포 시 True로 변경
+            samesite="lax",
+        )
         return response
     else:
         return templates.TemplateResponse(

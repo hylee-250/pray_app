@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>기도제목 등록</title>
+    <title>관리자 로그인</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
@@ -26,7 +26,7 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             padding: 40px;
             width: 100%;
-            max-width: 600px;
+            max-width: 400px;
             position: relative;
             overflow: hidden;
         }
@@ -51,7 +51,7 @@
         }
 
         h2::after {
-            content: '🙏';
+            content: '🔐';
             display: block;
             font-size: 0.4em;
             margin-top: 10px;
@@ -70,9 +70,7 @@
             font-size: 1.1em;
         }
 
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
+        .form-group input {
             width: 100%;
             padding: 15px;
             border: 2px solid #e1e5e9;
@@ -83,19 +81,11 @@
             box-sizing: border-box;
         }
 
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
+        .form-group input:focus {
             outline: none;
             border-color: #667eea;
             background: white;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-            font-family: inherit;
         }
 
         .submit-btn {
@@ -121,12 +111,12 @@
             transform: translateY(0);
         }
 
-        .admin-link {
+        .back-link {
             text-align: center;
             margin-top: 20px;
         }
 
-        .admin-link a {
+        .back-link a {
             color: #667eea;
             text-decoration: none;
             font-weight: 600;
@@ -137,42 +127,19 @@
             display: inline-block;
         }
 
-        .admin-link a:hover {
+        .back-link a:hover {
             background: #667eea;
             color: white;
         }
 
-        .select-wrapper {
-            position: relative;
-        }
-
-        .select-wrapper::after {
-            content: '▼';
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #667eea;
-            pointer-events: none;
-            font-size: 0.8em;
-        }
-
-        .form-group select {
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-        }
-
-        .header-image {
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
             text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header-img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f5c6cb;
         }
 
         .version-info {
@@ -199,9 +166,7 @@
                 font-size: 2em;
             }
 
-            .form-group input,
-            .form-group select,
-            .form-group textarea {
+            .form-group input {
                 padding: 15px;
                 font-size: 1rem;
                 margin-bottom: 1em;
@@ -228,9 +193,7 @@
                 font-size: 1.8em;
             }
 
-            .form-group input,
-            .form-group select,
-            .form-group textarea {
+            .form-group input {
                 padding: 18px;
                 font-size: 1.1rem;
             }
@@ -244,79 +207,29 @@
 </head>
 <body>
     <div class="container">
-        <h2>기도제목 등록</h2>
+        <h2>관리자 로그인</h2>
         
-        <!-- 헤더 이미지 추가 -->
-        <div class="header-image">
-            <img src="/static/images/DreamPlus3.png" alt="기도제목 등록" class="header-img" onerror="this.style.display='none'">
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
         </div>
+        {% endif %}
         
-        <!-- Jinja2 변수를 JavaScript에서 사용하기 위한 숨겨진 데이터 -->
-        <script>
-            const cellGroupLeaders = {{ cell_group_leaders | tojson }};
-        </script>
-        
-        <script>
-            function updateLeaders() {
-                const cellGroupSelect = document.getElementById('cell_group');
-                const leaderSelect = document.getElementById('leader');
-                const selectedCellGroup = cellGroupSelect.value;
-                
-                // 기존 옵션 제거
-                leaderSelect.innerHTML = '<option value="">선택</option>';
-                
-                if (selectedCellGroup) {
-                    // 선택된 다락방의 순장들만 추가
-                    const leaders = cellGroupLeaders[selectedCellGroup] || [];
-                    
-                    leaders.forEach(leader => {
-                        const option = document.createElement('option');
-                        option.value = leader;
-                        option.textContent = leader;
-                        leaderSelect.appendChild(option);
-                    });
-                }
-            }
-        </script>
-        
-<form method="post" action="/submit">
+        <form method="post" action="/login">
             <div class="form-group">
-                <label for="name">이름</label>
-                <input type="text" name="name" id="name" required placeholder="이름을 입력하세요">
+                <label for="password">비밀번호</label>
+                <input type="password" name="password" id="password" required placeholder="관리자 비밀번호를 입력하세요">
             </div>
             
-            <div class="form-group">
-                <label for="cell_group">다락방</label>
-                <div class="select-wrapper">
-                    <select name="cell_group" id="cell_group" onchange="updateLeaders()" required>
-                        <option value="">다락방을 선택하세요</option>
-                        {% for cg in cell_groups %}
-                            <option value="{{ cg }}">{{ cg }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="leader">순장</label>
-                <div class="select-wrapper">
-                    <select name="leader" id="leader" required>
-                        <option value="">다락방을 먼저 선택하세요</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="content">기도제목</label>
-                <textarea name="content" id="content" required placeholder="기도제목을 입력하세요"></textarea>
-            </div>
-            
-            <button type="submit" class="submit-btn">기도제목 등록하기</button>
-  </form>
+            <button type="submit" class="submit-btn">로그인</button>
+        </form>
         
+        <div class="back-link">
+            <a href="/">메인 페이지로 돌아가기</a>
+        </div>
     </div>
     
     <!-- 버전 정보 -->
     <div class="version-info">v1.0</div>
 </body>
-</html>
+</html> 

@@ -12,6 +12,7 @@ import io
 import os
 import pytz  # ✅ 추가
 from dotenv import load_dotenv
+from fastapi import HTTPException, status
 
 # .env 파일 로드 (개발환경에서만)
 load_dotenv()
@@ -35,7 +36,7 @@ Base.metadata.create_all(bind=engine)
 # ✅ 환경변수에서 순장 이름을 가져오거나 기본값 사용
 CELL_GROUP_LEADERS = {
     "은혜 다락방": os.getenv(
-        "LEADERS_EUNHYE", "고영은,김다빈,송은설,오지은,이호영,용민기,최다열,이용식"
+        "LEADERS_EUNHYE", "은혜1,은혜2,은혜3,은혜4,은혜5,은혜6,은혜7,은혜8"
     ).split(","),
     "하품 다락방": os.getenv(
         "LEADERS_HAPOOM", "하품1,하품2,하품3,하품4,하품5,하품6,하품7,하품8"
@@ -51,6 +52,9 @@ CELL_GROUP_LEADERS = {
     ).split(","),
 }
 
+# ✅ 관리자 비밀번호 (환경변수에서 가져오거나 기본값 사용)
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+
 
 @app.get("/")
 def form_page(request: Request):
@@ -62,6 +66,36 @@ def form_page(request: Request):
             "cell_group_leaders": CELL_GROUP_LEADERS,
         },
     )
+
+
+@app.get("/login")
+def login_page(request: Request, error: str = None):
+    return templates.TemplateResponse(
+        "login.html",
+        {
+            "request": request,
+            "error": error,
+        },
+    )
+
+
+@app.post("/login")
+def login(request: Request, password: str = Form(...)):
+    if password == ADMIN_PASSWORD:
+        # 로그인 성공 시 세션 설정 (간단한 쿠키 기반)
+        response = RedirectResponse(url="/admin", status_code=303)
+        response.set_cookie(
+            key="admin_authenticated", value="true", max_age=3600
+        )  # 1시간
+        return response
+    else:
+        return templates.TemplateResponse(
+            "login.html",
+            {
+                "request": request,
+                "error": "비밀번호가 올바르지 않습니다.",
+            },
+        )
 
 
 @app.get("/api/leaders/{cell_group}")
@@ -118,6 +152,9 @@ def view_all(
     cell_group: str = Query(default=None),
     week_offset: int = Query(default=0),
 ):
+    # 인증 체크
+    if not request.cookies.get("admin_authenticated"):
+        return RedirectResponse(url="/login", status_code=303)
     db = SessionLocal()
     week_start, week_end = get_week_range(week_offset)
     prayers = (
@@ -171,10 +208,14 @@ def view_all(
 
 @app.get("/export-excel")
 def export_excel(
+    request: Request,
     leader: str = Query(default=None),
     cell_group: str = Query(default=None),
     week_offset: int = Query(default=0),
 ):
+    # 인증 체크
+    if not request.cookies.get("admin_authenticated"):
+        return RedirectResponse(url="/login", status_code=303)
     db = SessionLocal()
     week_start, week_end = get_week_range(week_offset)
     prayers = (
@@ -246,7 +287,10 @@ def export_excel(
 
 
 @app.delete("/prayer/{prayer_id}")
-def delete_prayer(prayer_id: int):
+def delete_prayer(request: Request, prayer_id: int):
+    # 인증 체크
+    if not request.cookies.get("admin_authenticated"):
+        return {"error": "인증이 필요합니다."}
     db = SessionLocal()
     prayer = db.query(Prayer).filter(Prayer.id == prayer_id).first()
     if not prayer:
@@ -260,12 +304,16 @@ def delete_prayer(prayer_id: int):
 
 @app.put("/prayer/{prayer_id}")
 def update_prayer(
+    request: Request,
     prayer_id: int,
     name: str = Form(...),
     leader: str = Form(...),
     cell_group: str = Form(...),
     content: str = Form(...),
 ):
+    # 인증 체크
+    if not request.cookies.get("admin_authenticated"):
+        return {"error": "인증이 필요합니다."}
     db = SessionLocal()
     prayer = db.query(Prayer).filter(Prayer.id == prayer_id).first()
     if not prayer:

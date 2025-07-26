@@ -98,6 +98,12 @@ chmod +x build.sh
 
 **참고**: FastAPI 0.95.2 + Pydantic 1.10.13 + SQLAlchemy 1.4.49 조합으로 Rust 의존성 없이 안정적으로 배포됩니다.
 
+### Python 버전 설정
+Render에서 Python 버전이 인식되지 않는 경우:
+1. `runtime.txt`에 `3.11.7` 명시 (python- 접두사 제거)
+2. Render 대시보드에서 **Environment** → **Python Version** 확인
+3. 필요시 **3.11.7** 수동 설정
+
 ### 5. 시작 명령어
 ```bash
 uvicorn main:app --host 0.0.0.0 --port $PORT

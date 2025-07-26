@@ -171,6 +171,12 @@
             color: #666;
             line-height: 1.6;
             font-size: 1em;
+            white-space: pre-line;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin-top: 8px;
         }
 
         .action-buttons {
@@ -571,7 +577,7 @@
                         </div>
                         <div class="form-group">
                             <label for="editContent">기도제목</label>
-                            <textarea id="editContent" required></textarea>
+                            <textarea id="editContent" required placeholder="기도제목을 입력하세요&#10;엔터를 눌러 줄바꿈을 할 수 있습니다"></textarea>
                         </div>
                         <div class="modal-buttons">
                             <button type="button" class="btn-cancel" onclick="closeModal()">취소</button>
@@ -679,35 +685,40 @@
                     }
                 }
 
-                // 수정 폼 제출
-                document.getElementById('editForm').addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const prayerId = document.getElementById('editPrayerId').value;
-                    const formData = new FormData();
-                    formData.append('name', document.getElementById('editName').value);
-                    formData.append('leader', document.getElementById('editLeader').value);
-                    formData.append('cell_group', document.getElementById('editCellGroup').value);
-                    formData.append('content', document.getElementById('editContent').value);
-                    
-                    fetch(`/prayer/${prayerId}`, {
-                        method: 'PUT',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message) {
-                            alert('기도제목이 수정되었습니다.');
-                            closeModal();
-                            location.reload();
-                        } else {
-                            alert('수정 중 오류가 발생했습니다.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('수정 중 오류가 발생했습니다.');
-                    });
+                // 수정 폼 제출 (한 번만 등록)
+                document.addEventListener('DOMContentLoaded', function() {
+                    const editForm = document.getElementById('editForm');
+                    if (editForm) {
+                        editForm.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            
+                            const prayerId = document.getElementById('editPrayerId').value;
+                            const formData = new FormData();
+                            formData.append('name', document.getElementById('editName').value);
+                            formData.append('leader', document.getElementById('editLeader').value);
+                            formData.append('cell_group', document.getElementById('editCellGroup').value);
+                            formData.append('content', document.getElementById('editContent').value);
+                            
+                            fetch(`/prayer/${prayerId}`, {
+                                method: 'PUT',
+                                body: formData
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.message) {
+                                    alert('기도제목이 수정되었습니다.');
+                                    closeModal();
+                                    location.reload();
+                                } else {
+                                    alert('수정 중 오류가 발생했습니다.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('수정 중 오류가 발생했습니다.');
+                            });
+                        });
+                    }
                 });
             </script>
 
@@ -720,7 +731,7 @@
                         <div class="prayer-item">
                             <div class="prayer-content">
                                 <div class="member-name">{{ p.name }}</div>
-                                <div class="prayer-text">{{ p.content }}</div>
+                                <div class="prayer-text">{{ p.content | replace('\n', '<br>') | safe }}</div>
                             </div>
                             <div class="action-buttons">
                                 <button class="edit-btn" onclick="editPrayer({{ p.id }}, '{{ p.name }}', '{{ p.leader }}', '{{ p.cell_group }}', '{{ p.content }}')" ontouchstart="editPrayer({{ p.id }}, '{{ p.name }}', '{{ p.leader }}', '{{ p.cell_group }}', '{{ p.content }}')">✏️ 수정</button>

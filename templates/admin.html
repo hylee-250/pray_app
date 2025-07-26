@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>기도제목 목록</title>
+    <style>
+        .cell-group-title { font-size: 2em; font-weight: bold; margin-top: 1.5em; }
+        .leader-title { font-size: 1.3em; font-weight: bold; margin-top: 1em; margin-left: 1em; }
+        .member-name { font-size: 1em; font-weight: bold; margin-left: 2em; }
+        .prayer-content { font-size: 0.95em; margin-left: 2.5em; margin-bottom: 0.5em; }
+        .week-info { font-size: 1.2em; font-weight: bold; color: #333; margin-bottom: 1em; }
+    </style>
+</head>
+<body>
+  <h2>기도제목 목록</h2>
+
+  <!-- 📅 주차 정보 표시 -->
+  <div class="week-info">{{ current_week_label }}</div>
+
+  <!-- 🔽 필터 선택 -->
+  <form method="get" action="/admin">
+    <label for="week_offset">주차 선택:</label>
+    <select name="week_offset" onchange="this.form.submit()">
+      {% for week in week_options %}
+        <option value="{{ week.offset }}" {% if week.selected %}selected{% endif %}>{{ week.label }}</option>
+      {% endfor %}
+    </select>
+    &nbsp;
+    <label for="cell_group">다락방 선택:</label>
+    <select name="cell_group" onchange="this.form.submit()">
+      <option value="">전체 보기</option>
+      {% for cg in cell_groups %}
+        <option value="{{ cg }}" {% if selected_cell_group == cg %}selected{% endif %}>{{ cg }}</option>
+      {% endfor %}
+    </select>
+    &nbsp;
+    <label for="leader">순장 선택:</label>
+    <select name="leader" onchange="this.form.submit()">
+      <option value="">전체 보기</option>
+      {% for l in leaders %}
+        <option value="{{ l }}" {% if selected_leader == l %}selected{% endif %}>{{ l }}</option>
+      {% endfor %}
+    </select>
+    &nbsp;
+    <button type="button" onclick="exportToExcel()" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">📊 엑셀 다운로드</button>
+  </form>
+
+  <script>
+    function exportToExcel() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const leader = urlParams.get('leader') || '';
+      const cell_group = urlParams.get('cell_group') || '';
+      const week_offset = urlParams.get('week_offset') || '0';
+      
+      let exportUrl = '/export-excel?';
+      if (leader) exportUrl += `leader=${encodeURIComponent(leader)}&`;
+      if (cell_group) exportUrl += `cell_group=${encodeURIComponent(cell_group)}&`;
+      exportUrl += `week_offset=${week_offset}`;
+      
+      window.location.href = exportUrl;
+    }
+  </script>
+
+  <!-- 🙏 기도제목 리스트 (다락방-순장-순원별 그룹핑) -->
+  {% for cell_group, leaders in grouped.items() %}
+    <div class="cell-group-title">{{ cell_group }}</div>
+    {% for leader, prayers in leaders.items() %}
+      <div class="leader-title">{{ leader }} 순장</div>
+      {% for p in prayers %}
+        <div class="member-name">{{ p.name }}</div>
+        <div class="prayer-content">- {{ p.content }}</div>
+      {% endfor %}
+    {% endfor %}
+  {% endfor %}
+</body>
+</html>

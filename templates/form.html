@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>기도제목 등록</title>
+</head>
+<body>
+    <h2>기도제목 등록</h2>
+    
+    <!-- Jinja2 변수를 JavaScript에서 사용하기 위한 숨겨진 데이터 -->
+    <script>
+        const cellGroupLeaders = {{ cell_group_leaders | tojson }};
+    </script>
+    
+    <script>
+        function updateLeaders() {
+            const cellGroupSelect = document.getElementById('cell_group');
+            const leaderSelect = document.getElementById('leader');
+            const selectedCellGroup = cellGroupSelect.value;
+            
+            // 기존 옵션 제거
+            leaderSelect.innerHTML = '<option value="">선택</option>';
+            
+            if (selectedCellGroup) {
+                // 선택된 다락방의 순장들만 추가
+                const leaders = cellGroupLeaders[selectedCellGroup] || [];
+                
+                leaders.forEach(leader => {
+                    const option = document.createElement('option');
+                    option.value = leader;
+                    option.textContent = leader;
+                    leaderSelect.appendChild(option);
+                });
+            }
+        }
+    </script>
+    
+    <form method="post" action="/submit">
+        이름: <input type="text" name="name"><br>
+        다락방: <select name="cell_group" id="cell_group" onchange="updateLeaders()">
+            <option value="">선택</option>
+            {% for cg in cell_groups %}
+                <option value="{{ cg }}">{{ cg }}</option>
+            {% endfor %}
+        </select><br>
+        순장: <select name="leader" id="leader">
+            <option value="">다락방을 먼저 선택하세요</option>
+        </select><br>
+        기도제목:<br>
+        <textarea name="content" rows="4" cols="50"></textarea><br>
+        <button type="submit">제출</button>
+    </form>
+</body>
+</html>

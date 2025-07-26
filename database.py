@@ -10,10 +10,13 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./prayers.db")
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# SQLite인 경우 connect_args 추가, PostgreSQL인 경우 제거
+# SQLite인 경우 connect_args 추가, PostgreSQL인 경우 asyncpg 사용
 if DATABASE_URL.startswith("sqlite"):
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 else:
+    # PostgreSQL인 경우 asyncpg 드라이버 사용
+    if "postgresql://" in DATABASE_URL:
+        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
     engine = create_engine(DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

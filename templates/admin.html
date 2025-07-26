@@ -391,12 +391,12 @@
                 
                 <div class="filter-group">
                     <label for="leader">순장:</label>
-                    <select name="leader" onchange="this.form.submit()">
-                        <option value="">전체 보기</option>
-                        {% for l in leaders %}
-                            <option value="{{ l }}" {% if selected_leader == l %}selected{% endif %}>{{ l }}</option>
-                        {% endfor %}
-                    </select>
+    <select name="leader" onchange="this.form.submit()">
+      <option value="">전체 보기</option>
+      {% for l in leaders %}
+        <option value="{{ l }}" {% if selected_leader == l %}selected{% endif %}>{{ l }}</option>
+      {% endfor %}
+    </select>
                 </div>
                 
                 <button type="button" onclick="exportToExcel()" class="export-btn">📊 엑셀 다운로드</button>
@@ -438,7 +438,7 @@
                             <button type="button" class="btn-cancel" onclick="closeModal()">취소</button>
                             <button type="submit" class="btn-save">저장</button>
                         </div>
-                    </form>
+  </form>
                 </div>
             </div>
 
@@ -560,7 +560,7 @@
                 <div class="cell-group-title">{{ cell_group }}</div>
                 {% for leader, prayers in leaders.items() %}
                     <div class="leader-title">{{ leader }} 순장</div>
-                    {% for p in prayers %}
+    {% for p in prayers %}
                         <div class="prayer-item">
                             <div class="prayer-content">
                                 <div class="member-name">{{ p.name }}</div>
@@ -573,7 +573,7 @@
                         </div>
                     {% endfor %}
                 {% endfor %}
-            {% endfor %}
+    {% endfor %}
         </div>
     </div>
 </body>

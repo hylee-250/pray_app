@@ -3,73 +3,578 @@
 <head>
     <title>기도제목 목록</title>
     <style>
-        .cell-group-title { font-size: 2em; font-weight: bold; margin-top: 1.5em; }
-        .leader-title { font-size: 1.3em; font-weight: bold; margin-top: 1em; margin-left: 1em; }
-        .member-name { font-size: 1em; font-weight: bold; margin-left: 2em; }
-        .prayer-content { font-size: 0.95em; margin-left: 2.5em; margin-bottom: 0.5em; }
-        .week-info { font-size: 1.2em; font-weight: bold; color: #333; margin-bottom: 1em; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h2 {
+            font-size: 2.5em;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .week-info {
+            font-size: 1.3em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .filters {
+            background: #f8f9fa;
+            padding: 25px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #555;
+            white-space: nowrap;
+        }
+
+        .filter-group select {
+            padding: 10px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            background: white;
+            font-size: 0.9em;
+            min-width: 150px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-left: auto;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .cell-group-title {
+            font-size: 2em;
+            font-weight: 600;
+            color: #333;
+            margin: 30px 0 20px 0;
+            padding: 15px 0;
+            border-bottom: 3px solid #667eea;
+            position: relative;
+        }
+
+        .cell-group-title::before {
+            content: '🏠';
+            margin-right: 10px;
+        }
+
+        .leader-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #555;
+            margin: 25px 0 15px 20px;
+            padding: 10px 0;
+            border-left: 4px solid #28a745;
+            padding-left: 15px;
+        }
+
+        .leader-title::before {
+            content: '👥';
+            margin-right: 8px;
+        }
+
+        .prayer-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .prayer-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .prayer-content {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .prayer-text {
+            color: #666;
+            line-height: 1.6;
+            font-size: 1em;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-left: 15px;
+        }
+
+        .edit-btn, .delete-btn {
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+
+        .edit-btn:hover, .delete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 모달 스타일 개선 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .modal h3 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .btn-cancel, .btn-save {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-cancel:hover, .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h2 {
+                font-size: 2em;
+            }
+
+            .filter-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .export-btn {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .prayer-item {
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                margin-left: 0;
+                margin-top: 15px;
+                justify-content: flex-end;
+            }
+        }
     </style>
 </head>
 <body>
-  <h2>기도제목 목록</h2>
+    <div class="container">
+        <div class="header">
+            <h2>기도제목 관리</h2>
+            <div class="week-info">{{ current_week_label }}</div>
+        </div>
 
-  <!-- 📅 주차 정보 표시 -->
-  <div class="week-info">{{ current_week_label }}</div>
+        <div class="filters">
+            <form method="get" action="/admin" class="filter-form">
+                <div class="filter-group">
+                    <label for="week_offset">주차:</label>
+                    <select name="week_offset" onchange="this.form.submit()">
+                        {% for week in week_options %}
+                            <option value="{{ week.offset }}" {% if week.selected %}selected{% endif %}>{{ week.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="cell_group">다락방:</label>
+                    <select name="cell_group" onchange="this.form.submit()">
+                        <option value="">전체 보기</option>
+                        {% for cg in cell_groups %}
+                            <option value="{{ cg }}" {% if selected_cell_group == cg %}selected{% endif %}>{{ cg }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="leader">순장:</label>
+                    <select name="leader" onchange="this.form.submit()">
+                        <option value="">전체 보기</option>
+                        {% for l in leaders %}
+                            <option value="{{ l }}" {% if selected_leader == l %}selected{% endif %}>{{ l }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="button" onclick="exportToExcel()" class="export-btn">📊 엑셀 다운로드</button>
+            </form>
+        </div>
 
-  <!-- 🔽 필터 선택 -->
-  <form method="get" action="/admin">
-    <label for="week_offset">주차 선택:</label>
-    <select name="week_offset" onchange="this.form.submit()">
-      {% for week in week_options %}
-        <option value="{{ week.offset }}" {% if week.selected %}selected{% endif %}>{{ week.label }}</option>
-      {% endfor %}
-    </select>
-    &nbsp;
-    <label for="cell_group">다락방 선택:</label>
-    <select name="cell_group" onchange="this.form.submit()">
-      <option value="">전체 보기</option>
-      {% for cg in cell_groups %}
-        <option value="{{ cg }}" {% if selected_cell_group == cg %}selected{% endif %}>{{ cg }}</option>
-      {% endfor %}
-    </select>
-    &nbsp;
-    <label for="leader">순장 선택:</label>
-    <select name="leader" onchange="this.form.submit()">
-      <option value="">전체 보기</option>
-      {% for l in leaders %}
-        <option value="{{ l }}" {% if selected_leader == l %}selected{% endif %}>{{ l }}</option>
-      {% endfor %}
-    </select>
-    &nbsp;
-    <button type="button" onclick="exportToExcel()" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">📊 엑셀 다운로드</button>
-  </form>
+        <div class="content">
+            <!-- 수정 모달 -->
+            <div id="editModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <h3>기도제목 수정</h3>
+                    <form id="editForm">
+                        <input type="hidden" id="editPrayerId">
+                        <div class="form-group">
+                            <label for="editName">이름</label>
+                            <input type="text" id="editName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editCellGroup">다락방</label>
+                            <select id="editCellGroup" onchange="updateEditLeaders()" required>
+                                <option value="">선택</option>
+                                {% for cg in cell_groups %}
+                                    <option value="{{ cg }}">{{ cg }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editLeader">순장</label>
+                            <select id="editLeader" required>
+                                <option value="">다락방을 먼저 선택하세요</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editContent">기도제목</label>
+                            <textarea id="editContent" required></textarea>
+                        </div>
+                        <div class="modal-buttons">
+                            <button type="button" class="btn-cancel" onclick="closeModal()">취소</button>
+                            <button type="submit" class="btn-save">저장</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-  <script>
-    function exportToExcel() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const leader = urlParams.get('leader') || '';
-      const cell_group = urlParams.get('cell_group') || '';
-      const week_offset = urlParams.get('week_offset') || '0';
-      
-      let exportUrl = '/export-excel?';
-      if (leader) exportUrl += `leader=${encodeURIComponent(leader)}&`;
-      if (cell_group) exportUrl += `cell_group=${encodeURIComponent(cell_group)}&`;
-      exportUrl += `week_offset=${week_offset}`;
-      
-      window.location.href = exportUrl;
-    }
-  </script>
+            <script>
+                const cellGroupLeaders = {{ cell_group_leaders | tojson }};
+                
+                function exportToExcel() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const leader = urlParams.get('leader') || '';
+                    const cell_group = urlParams.get('cell_group') || '';
+                    const week_offset = urlParams.get('week_offset') || '0';
+                    
+                    let exportUrl = '/export-excel?';
+                    if (leader) exportUrl += `leader=${encodeURIComponent(leader)}&`;
+                    if (cell_group) exportUrl += `cell_group=${encodeURIComponent(cell_group)}&`;
+                    exportUrl += `week_offset=${week_offset}`;
+                    
+                    window.location.href = exportUrl;
+                }
 
-  <!-- 🙏 기도제목 리스트 (다락방-순장-순원별 그룹핑) -->
-  {% for cell_group, leaders in grouped.items() %}
-    <div class="cell-group-title">{{ cell_group }}</div>
-    {% for leader, prayers in leaders.items() %}
-      <div class="leader-title">{{ leader }} 순장</div>
-      {% for p in prayers %}
-        <div class="member-name">{{ p.name }}</div>
-        <div class="prayer-content">- {{ p.content }}</div>
-      {% endfor %}
-    {% endfor %}
-  {% endfor %}
+                function deletePrayer(prayerId) {
+                    if (confirm('정말로 이 기도제목을 삭제하시겠습니까?')) {
+                        fetch(`/prayer/${prayerId}`, {
+                            method: 'DELETE',
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message) {
+                                alert('기도제목이 삭제되었습니다.');
+                                location.reload();
+                            } else {
+                                alert('삭제 중 오류가 발생했습니다.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('삭제 중 오류가 발생했습니다.');
+                        });
+                    }
+                }
+
+                function editPrayer(prayerId, name, leader, cellGroup, content) {
+                    document.getElementById('editPrayerId').value = prayerId;
+                    document.getElementById('editName').value = name;
+                    document.getElementById('editCellGroup').value = cellGroup;
+                    document.getElementById('editContent').value = content;
+                    
+                    // 순장 옵션 업데이트
+                    updateEditLeaders();
+                    document.getElementById('editLeader').value = leader;
+                    
+                    document.getElementById('editModal').style.display = 'block';
+                }
+
+                function updateEditLeaders() {
+                    const cellGroupSelect = document.getElementById('editCellGroup');
+                    const leaderSelect = document.getElementById('editLeader');
+                    const selectedCellGroup = cellGroupSelect.value;
+                    
+                    leaderSelect.innerHTML = '<option value="">선택</option>';
+                    
+                    if (selectedCellGroup) {
+                        const leaders = cellGroupLeaders[selectedCellGroup] || [];
+                        leaders.forEach(leader => {
+                            const option = document.createElement('option');
+                            option.value = leader;
+                            option.textContent = leader;
+                            leaderSelect.appendChild(option);
+                        });
+                    }
+                }
+
+                function closeModal() {
+                    document.getElementById('editModal').style.display = 'none';
+                }
+
+                // 모달 외부 클릭 시 닫기
+                window.onclick = function(event) {
+                    const modal = document.getElementById('editModal');
+                    if (event.target == modal) {
+                        closeModal();
+                    }
+                }
+
+                // 수정 폼 제출
+                document.getElementById('editForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const prayerId = document.getElementById('editPrayerId').value;
+                    const formData = new FormData();
+                    formData.append('name', document.getElementById('editName').value);
+                    formData.append('leader', document.getElementById('editLeader').value);
+                    formData.append('cell_group', document.getElementById('editCellGroup').value);
+                    formData.append('content', document.getElementById('editContent').value);
+                    
+                    fetch(`/prayer/${prayerId}`, {
+                        method: 'PUT',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            alert('기도제목이 수정되었습니다.');
+                            closeModal();
+                            location.reload();
+                        } else {
+                            alert('수정 중 오류가 발생했습니다.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('수정 중 오류가 발생했습니다.');
+                    });
+                });
+            </script>
+
+            <!-- 🙏 기도제목 리스트 (다락방-순장-순원별 그룹핑) -->
+            {% for cell_group, leaders in grouped.items() %}
+                <div class="cell-group-title">{{ cell_group }}</div>
+                {% for leader, prayers in leaders.items() %}
+                    <div class="leader-title">{{ leader }} 순장</div>
+                    {% for p in prayers %}
+                        <div class="prayer-item">
+                            <div class="prayer-content">
+                                <div class="member-name">{{ p.name }}</div>
+                                <div class="prayer-text">{{ p.content }}</div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="edit-btn" onclick="editPrayer({{ p.id }}, '{{ p.name }}', '{{ p.leader }}', '{{ p.cell_group }}', '{{ p.content }}')">✏️ 수정</button>
+                                <button class="delete-btn" onclick="deletePrayer({{ p.id }})">🗑️ 삭제</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
 </body>
 </html>

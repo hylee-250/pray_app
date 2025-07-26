@@ -191,6 +191,7 @@ def view_all(
             "grouped": grouped,
             "week_options": week_options,
             "current_week_label": get_week_label(week_offset),
+            "cell_group_leaders": CELL_GROUP_LEADERS,
         },
     )
 
@@ -284,3 +285,46 @@ def export_excel(
         filename=filename,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
+
+
+@app.delete("/prayer/{prayer_id}")
+def delete_prayer(prayer_id: int):
+    db = SessionLocal()
+    prayer = db.query(Prayer).filter(Prayer.id == prayer_id).first()
+
+    if not prayer:
+        db.close()
+        return {"error": "기도제목을 찾을 수 없습니다."}
+
+    db.delete(prayer)
+    db.commit()
+    db.close()
+
+    return {"message": "기도제목이 삭제되었습니다."}
+
+
+@app.put("/prayer/{prayer_id}")
+def update_prayer(
+    prayer_id: int,
+    name: str = Form(...),
+    leader: str = Form(...),
+    cell_group: str = Form(...),
+    content: str = Form(...),
+):
+    db = SessionLocal()
+    prayer = db.query(Prayer).filter(Prayer.id == prayer_id).first()
+
+    if not prayer:
+        db.close()
+        return {"error": "기도제목을 찾을 수 없습니다."}
+
+    # 기도제목 정보 업데이트
+    prayer.name = name
+    prayer.leader = leader
+    prayer.cell_group = cell_group
+    prayer.content = content
+
+    db.commit()
+    db.close()
+
+    return {"message": "기도제목이 수정되었습니다."}

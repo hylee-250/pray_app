@@ -152,14 +152,14 @@ def view_all(
     )
     db.close()
 
-    unique_leaders = sorted(set(p.leader for p in prayers))
-    unique_cell_groups = sorted(set(p.cell_group for p in prayers if p.cell_group))
+    unique_leaders = sorted(set(str(p.leader) for p in prayers if p.leader))
+    unique_cell_groups = sorted(set(str(p.cell_group) for p in prayers if p.cell_group))
 
     # 필터 적용
     if leader:
-        prayers = [p for p in prayers if p.leader == leader]
+        prayers = [p for p in prayers if str(p.leader) == leader]
     if cell_group:
-        prayers = [p for p in prayers if p.cell_group == cell_group]
+        prayers = [p for p in prayers if str(p.cell_group) == cell_group]
 
     # 다락방-순장별로 그룹핑
     grouped = {}
@@ -216,9 +216,9 @@ def export_excel(
 
     # 필터 적용
     if leader:
-        prayers = [p for p in prayers if p.leader == leader]
+        prayers = [p for p in prayers if str(p.leader) == leader]
     if cell_group:
-        prayers = [p for p in prayers if p.cell_group == cell_group]
+        prayers = [p for p in prayers if str(p.cell_group) == cell_group]
 
     # 다락방-순장별로 그룹핑
     grouped = {}
@@ -234,7 +234,10 @@ def export_excel(
     # 엑셀 워크북 생성
     wb = openpyxl.Workbook()
     ws = wb.active
-    ws.title = "기도제목 목록"
+    if ws is None:
+        ws = wb.create_sheet("기도제목 목록")
+    else:
+        ws.title = "기도제목 목록"
 
     # 스타일 설정
     cell_group_font = Font(size=16, bold=True)

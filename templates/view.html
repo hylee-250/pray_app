@@ -394,40 +394,241 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 5px; /* 외부 패딩 줄임 */
+            }
+
             .container {
-                padding: 20px;
-                margin: 10px;
+                padding: 10px; /* 컨테이너 패딩 줄임 */
+                margin: 0;
+                border-radius: 8px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
             }
 
             .controls {
                 flex-direction: column;
                 align-items: stretch;
+                gap: 10px;
+                margin-bottom: 20px;
             }
 
             .control-group select {
                 min-width: auto;
+                padding: 12px;
+                font-size: 16px; /* iOS 줌 방지 */
             }
 
             .week-selector {
                 flex-wrap: wrap;
                 justify-content: center;
+                gap: 8px;
+            }
+
+            .week-btn {
+                padding: 8px 12px;
+                font-size: 0.9em;
+                min-width: 60px;
             }
 
             .stats {
-                flex-direction: column;
-                align-items: center;
+                flex-direction: row;
+                justify-content: space-between;
+                margin-bottom: 20px;
+                gap: 10px;
             }
 
             .stat-item {
+                flex: 1;
                 min-width: auto;
-                width: 100%;
-                max-width: 200px;
+                padding: 15px 10px;
+            }
+
+            .stat-number {
+                font-size: 1.5em;
+            }
+
+            .stat-label {
+                font-size: 0.8em;
             }
 
             .back-btn {
                 position: static;
-                margin-bottom: 20px;
+                margin-bottom: 15px;
                 text-align: center;
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+
+            /* 모바일 기도제목 최적화 - 패딩/마진 최소화 */
+            .prayer-section {
+                margin-bottom: 15px; /* 다락방 간 간격 줄임 */
+                padding: 12px 8px; /* 다락방 패딩 대폭 줄임 */
+                border-radius: 10px;
+            }
+
+            .cell-group-title {
+                font-size: 1.4em;
+                margin-bottom: 12px; /* 제목 아래 간격 줄임 */
+            }
+
+            .leader-section {
+                margin-bottom: 12px; /* 순장 간 간격 줄임 */
+                padding: 10px 8px; /* 순장 패딩 줄임 */
+                border-radius: 8px;
+            }
+
+            .leader-title {
+                font-size: 1.15em;
+                margin-bottom: 10px; /* 순장 제목 아래 간격 줄임 */
+                padding-bottom: 5px;
+            }
+
+            .leader-title::after {
+                font-size: 0.9em;
+            }
+
+            /* 기도제목 카드 모바일 최적화 - 패딩 최소화 */
+            .prayer-item {
+                padding: 12px 10px; /* 기도제목 패딩 줄임 */
+                margin-bottom: 8px; /* 기도제목 간 간격 줄임 */
+                border-radius: 8px;
+                border-left-width: 3px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            }
+
+            .prayer-name {
+                font-size: 1.05em;
+                font-weight: 700;
+                margin-bottom: 8px; /* 이름 아래 간격 줄임 */
+                color: #333;
+                line-height: 1.3;
+                word-break: keep-all;
+                overflow-wrap: break-word;
+            }
+
+            .prayer-content {
+                font-size: 1em;
+                line-height: 1.6; /* 줄 간격 약간 줄임 */
+                color: #444;
+                white-space: pre-wrap;
+                word-break: keep-all;
+                overflow-wrap: break-word;
+                margin-bottom: 8px; /* 아래 마진 줄임 */
+                padding: 8px 10px; /* 패딩 줄임 */
+                background: rgba(255, 255, 255, 0.7);
+                border-radius: 6px;
+                border-left: 3px solid #667eea;
+            }
+
+            .prayer-date {
+                font-size: 0.85em;
+                color: #666;
+                margin-top: 8px;
+                text-align: right;
+                font-weight: 500;
+            }
+
+            /* 액션 버튼 모바일 최적화 */
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+                margin: 20px 0;
+                padding: 15px;
+            }
+
+            .action-btn {
+                width: 100%;
+                padding: 15px;
+                font-size: 1em;
+                justify-content: center;
+                border-radius: 10px;
+            }
+
+            /* TOP 버튼 모바일 최적화 */
+            .top-btn {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 16px;
+                font-size: 0.8em;
+            }
+
+            /* 텍스트 선택 개선 */
+            .prayer-content {
+                -webkit-user-select: text;
+                -moz-user-select: text;
+                -ms-user-select: text;
+                user-select: text;
+            }
+        }
+
+        /* 더 작은 화면 (iPhone SE 등) - 극한 공간 절약 */
+        @media (max-width: 480px) {
+            body {
+                padding: 3px; /* 최소 패딩 */
+            }
+
+            .container {
+                padding: 8px; /* 컨테이너 패딩 최소화 */
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+                margin-bottom: 10px;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 5px;
+                margin-bottom: 15px;
+            }
+
+            .stat-item {
+                padding: 8px;
+            }
+
+            .prayer-section {
+                margin-bottom: 10px; /* 다락방 간격 더 줄임 */
+                padding: 8px 5px; /* 최소 패딩 */
+            }
+
+            .cell-group-title {
+                font-size: 1.25em;
+                margin-bottom: 8px;
+            }
+
+            .leader-section {
+                margin-bottom: 8px; /* 순장 간격 더 줄임 */
+                padding: 8px 5px; /* 최소 패딩 */
+            }
+
+            .leader-title {
+                font-size: 1.1em;
+                margin-bottom: 8px;
+            }
+
+            .prayer-item {
+                padding: 10px 8px; /* 기도제목 패딩 최소화 */
+                margin-bottom: 6px; /* 간격 더 줄임 */
+            }
+
+            .prayer-name {
+                font-size: 1em;
+                margin-bottom: 6px;
+            }
+
+            .prayer-content {
+                font-size: 0.95em;
+                padding: 6px 8px; /* 패딩 최소화 */
+                line-height: 1.5;
+            }
+
+            .prayer-date {
+                font-size: 0.8em;
+                margin-top: 5px;
             }
         }
     </style>

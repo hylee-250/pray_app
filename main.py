@@ -142,6 +142,12 @@ def get_week_range(week_offset=0):
     sunday = sunday.replace(hour=0, minute=0, second=0, microsecond=0)
     sunday += timedelta(weeks=week_offset)
     saturday = sunday + timedelta(days=6, hours=23, minutes=59, seconds=59)
+    
+    # PostgreSQL과의 호환성을 위해 UTC로 변환
+    if os.getenv("DATABASE_URL", "").startswith("postgresql"):
+        sunday = sunday.astimezone(pytz.UTC)
+        saturday = saturday.astimezone(pytz.UTC)
+    
     return sunday, saturday
 
 
@@ -165,7 +171,7 @@ def view_prayers(
     prayers = (
         db.query(Prayer)
         .filter(Prayer.created_at >= week_start, Prayer.created_at <= week_end)
-        .filter(Prayer.is_private == False)  # 비공개 기도제목 제외
+        .filter(Prayer.is_private.is_(False))  # PostgreSQL boolean 최적화
         .order_by(Prayer.created_at.desc())
         .all()
     )
@@ -286,7 +292,7 @@ def export_excel_view(
     prayers = (
         db.query(Prayer)
         .filter(Prayer.created_at >= week_start, Prayer.created_at <= week_end)
-        .filter(Prayer.is_private == False)  # 비공개 기도제목 제외
+        .filter(Prayer.is_private.is_(False))  # PostgreSQL boolean 최적화
         .order_by(Prayer.created_at.desc())
         .all()
     )

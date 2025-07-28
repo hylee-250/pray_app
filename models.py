@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean, Text
 from sqlalchemy.orm import relationship
 from database import Base
+import os
 
 
 class CellGroup(Base):
@@ -21,9 +22,9 @@ class Leader(Base):
 class Prayer(Base):
     __tablename__ = "prayers"
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    leader = Column(String)  # 순장
-    cell_group = Column(String)  # 다락방/소그룹
-    content = Column(String)
-    created_at = Column(DateTime)
-    is_private = Column(Boolean, default=False)  # 비공개 여부
+    name = Column(String(100), nullable=False, index=True)  # 이름 - 인덱스 추가
+    leader = Column(String(100), nullable=False, index=True)  # 순장 - 인덱스 추가
+    cell_group = Column(String(100), nullable=False, index=True)  # 다락방/소그룹 - 인덱스 추가
+    content = Column(Text, nullable=False)  # 긴 텍스트를 위해 Text 타입 사용
+    created_at = Column(DateTime(timezone=True), nullable=False, index=True)  # 타임존 지원, 인덱스 추가
+    is_private = Column(Boolean, default=False, nullable=False, index=True)  # 비공개 여부 - 인덱스 추가

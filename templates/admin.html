@@ -219,6 +219,18 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
+        /* 비공개 기도제목 스타일 */
+        .private-prayer {
+            border-left: 4px solid #ff6b6b;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(255, 107, 107, 0.02) 100%);
+        }
+
+        .private-badge {
+            margin-left: 8px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
         /* 모달 스타일 개선 */
         .modal {
             display: none;
@@ -301,6 +313,78 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        /* 새로운 체크박스 스타일 */
+        .checkbox-group {
+            margin-bottom: 20px;
+        }
+
+        .checkbox-label {
+            position: relative;
+            display: block;
+            padding: 20px;
+            margin: 10px 0;
+            background: #ffffff;
+            border: 2px solid #e1e5e9;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .checkbox-label:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkbox-label::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border: 3px solid #667eea;
+            border-radius: 6px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-label.checked::before {
+            background: #667eea !important;
+            border-color: #667eea !important;
+        }
+
+        .checkbox-label.checked::after {
+            content: '✓';
+            position: absolute;
+            left: 26px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            z-index: 10;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .checkbox-label span {
+            display: block;
+            padding-left: 60px;
+            line-height: 1.5;
+        }
+
         .form-group textarea {
             resize: vertical;
             min-height: 100px;
@@ -360,6 +444,44 @@
             font-size: 0.8em;
             font-weight: 500;
             z-index: 1000;
+        }
+
+        /* TOP 버튼 스타일 */
+        .top-btn {
+            position: fixed;
+            bottom: 60px;
+            right: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .top-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .top-btn.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .top-btn .arrow {
+            font-size: 1.2em;
+            font-weight: bold;
         }
 
         @media (max-width: 768px) {
@@ -601,6 +723,12 @@
                             <label for="editContent">기도제목</label>
                             <textarea id="editContent" required placeholder="기도제목을 입력하세요&#10;엔터를 눌러 줄바꿈을 할 수 있습니다"></textarea>
                         </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="editIsPrivate" value="true">
+                                <span>🔒 비공개로 설정 (관리자만 볼 수 있음)</span>
+                            </label>
+                        </div>
                         <div class="modal-buttons">
                             <button type="button" class="btn-cancel" onclick="closeModal()">취소</button>
                             <button type="submit" class="btn-save">저장</button>
@@ -653,13 +781,29 @@
                                     let prayerElement = currentElement.nextElementSibling;
                                     while (prayerElement && !prayerElement.classList.contains('leader-title') && !prayerElement.classList.contains('cell-group-title')) {
                                         if (prayerElement.classList.contains('prayer-item')) {
-                                            const memberName = prayerElement.querySelector('.member-name')?.textContent || '';
+                                            const memberNameElement = prayerElement.querySelector('.member-name');
                                             const prayerText = prayerElement.querySelector('.prayer-text')?.textContent || '';
                                             
+                                            // 이름에서 비공개 아이콘 제거
+                                            let memberName = '';
+                                            if (memberNameElement) {
+                                                // 비공개 배지를 제외한 텍스트만 추출
+                                                const clonedElement = memberNameElement.cloneNode(true);
+                                                const privateBadge = clonedElement.querySelector('.private-badge');
+                                                if (privateBadge) {
+                                                    privateBadge.remove();
+                                                }
+                                                memberName = clonedElement.textContent.trim();
+                                            }
+                                            
                                             if (memberName && prayerText) {
+                                                // 비공개 기도제목인지 확인
+                                                const isPrivate = prayerElement.classList.contains('private-prayer');
+                                                const finalContent = isPrivate ? `🔒 ${prayerText}` : prayerText;
+                                                
                                                 prayersByStructure[cellGroupName][leaderName].push({
                                                     name: memberName,
-                                                    content: prayerText
+                                                    content: finalContent
                                                 });
                                             }
                                         }
@@ -766,6 +910,7 @@
                     const leader = button.getAttribute('data-leader');
                     const cellGroup = button.getAttribute('data-cell-group');
                     const content = button.getAttribute('data-content');
+                    const isPrivate = button.getAttribute('data-is-private') === 'True';
                     
                     // 폼 요소들 가져오기
                     const editPrayerId = document.getElementById('editPrayerId');
@@ -773,12 +918,25 @@
                     const editCellGroup = document.getElementById('editCellGroup');
                     const editContent = document.getElementById('editContent');
                     const editLeader = document.getElementById('editLeader');
+                    const editIsPrivate = document.getElementById('editIsPrivate');
                     
                     // 값 설정
                     if (editPrayerId) editPrayerId.value = prayerId;
                     if (editName) editName.value = name;
                     if (editCellGroup) editCellGroup.value = cellGroup;
                     if (editContent) editContent.value = content;
+                    if (editIsPrivate) {
+                        editIsPrivate.checked = isPrivate;
+                        // 체크박스 라벨 업데이트
+                        const label = editIsPrivate.closest('.checkbox-label');
+                        if (label) {
+                            if (isPrivate) {
+                                label.classList.add('checked');
+                            } else {
+                                label.classList.remove('checked');
+                            }
+                        }
+                    }
                     
                     // 순장 옵션 업데이트
                     updateEditLeaders();
@@ -850,6 +1008,24 @@
                     }
                 }
 
+                // 체크박스 상태 관리
+                document.addEventListener('DOMContentLoaded', function() {
+                    const checkbox = document.getElementById('editIsPrivate');
+                    if (checkbox) {
+                        const label = checkbox.closest('.checkbox-label');
+                        
+                        checkbox.addEventListener('change', function() {
+                            if (label) {
+                                if (this.checked) {
+                                    label.classList.add('checked');
+                                } else {
+                                    label.classList.remove('checked');
+                                }
+                            }
+                        });
+                    }
+                });
+
                 // 수정 폼 제출 (모바일 최적화)
                 document.addEventListener('DOMContentLoaded', function() {
                     const editForm = document.getElementById('editForm');
@@ -875,6 +1051,10 @@
                             formData.append('leader', leader);
                             formData.append('cell_group', cellGroup);
                             formData.append('content', content);
+                            
+                            // 비공개 상태 추가
+                            const isPrivate = document.getElementById('editIsPrivate')?.checked || false;
+                            formData.append('is_private', isPrivate);
                             
                             // 수정 요청
                             fetch(`/prayer/${prayerId}`, {
@@ -910,10 +1090,15 @@
                 <div class="cell-group-title">{{ cell_group }}</div>
                 {% for leader, prayers in leaders.items() %}
                     <div class="leader-title">{{ leader }} 순장</div>
-    {% for p in prayers %}
-                        <div class="prayer-item">
+                        {% for p in prayers %}
+                        <div class="prayer-item {% if p.is_private %}private-prayer{% endif %}">
                             <div class="prayer-content">
-                                <div class="member-name">{{ p.name }}</div>
+                                <div class="member-name">
+                                    {{ p.name }}
+                                    {% if p.is_private %}
+                                        <span class="private-badge">🔒</span>
+                                    {% endif %}
+                                </div>
                                 <div class="prayer-text">{{ p.content | replace('\n', '<br>') | safe }}</div>
                             </div>
                             <div class="action-buttons">
@@ -923,6 +1108,7 @@
                                     data-leader="{{ p.leader }}"
                                     data-cell-group="{{ p.cell_group }}"
                                     data-content="{{ p.content }}"
+                                    data-is-private="{{ p.is_private }}"
                                     onclick="editPrayerFromData(this)" 
                                     ontouchstart="editPrayerFromData(this)" 
                                     style="touch-action: manipulation;">✏️ 수정</button>
@@ -935,7 +1121,33 @@
         </div>
     </div>
     
+    <!-- TOP 버튼 -->
+    <button class="top-btn" id="topBtn" onclick="scrollToTop()">
+        <span class="arrow">⬆️</span>
+        <span>TOP</span>
+    </button>
+
     <!-- 버전 정보 -->
     <div class="version-info">v1.0</div>
+
+    <script>
+        // TOP 버튼 표시/숨김 로직
+        window.addEventListener('scroll', function() {
+            const topBtn = document.getElementById('topBtn');
+            if (window.pageYOffset > 300) {
+                topBtn.classList.add('show');
+            } else {
+                topBtn.classList.remove('show');
+            }
+        });
+
+        // 맨 위로 스크롤 함수
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    </script>
 </body>
 </html>

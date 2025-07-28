@@ -142,6 +142,31 @@
             color: white;
         }
 
+        .view-btn-container {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .view-btn {
+            color: #764ba2;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 15px 30px;
+            border: 2px solid #764ba2;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            background: white;
+            font-size: 1.1em;
+        }
+
+        .view-btn:hover {
+            background: #764ba2;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.3);
+        }
+
         .select-wrapper {
             position: relative;
         }
@@ -240,6 +265,135 @@
                 font-size: 1.4em;
             }
         }
+
+        /* 성공 메시지 팝업 스타일 */
+        .success-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            text-align: center;
+            z-index: 1000;
+            max-width: 400px;
+            width: 90%;
+            border: 3px solid #667eea;
+        }
+
+        .success-popup h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .success-popup p {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        .success-popup button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .success-popup button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* 새로운 체크박스 스타일 */
+        .checkbox-group {
+            margin-bottom: 20px;
+        }
+
+        .checkbox-label {
+            position: relative;
+            display: block;
+            padding: 20px;
+            margin: 10px 0;
+            background: #ffffff;
+            border: 2px solid #e1e5e9;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .checkbox-label:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkbox-label::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border: 3px solid #667eea;
+            border-radius: 6px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-label.checked::before {
+            background: #667eea !important;
+            border-color: #667eea !important;
+        }
+
+        .checkbox-label.checked::after {
+            content: '✓';
+            position: absolute;
+            left: 26px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            z-index: 10;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .checkbox-label span {
+            display: block;
+            padding-left: 60px;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -306,17 +460,80 @@
                 </div>
             </div>
             
-                                    <div class="form-group">
-                            <label for="content">기도제목</label>
-                            <textarea name="content" id="content" required placeholder="기도제목을 입력하세요&#10;엔터를 눌러 줄바꿈을 할 수 있습니다"></textarea>
-                        </div>
+                                                <div class="form-group">
+                <label for="content">기도제목</label>
+                <textarea name="content" id="content" required placeholder="기도제목을 입력하세요&#10;엔터를 눌러 줄바꿈을 할 수 있습니다"></textarea>
+            </div>
+            
+            <div class="form-group checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_private" id="is_private" value="true">
+                    <span>🔒 비공개로 등록 (관리자만 볼 수 있음)</span>
+                </label>
+            </div>
             
             <button type="submit" class="submit-btn">기도제목 등록하기</button>
-  </form>
+        </form>
+        
+        <!-- 조회 페이지 버튼 -->
+        <div class="view-btn-container">
+            <a href="/view" class="view-btn">📋 기도제목 조회하기</a>
+        </div>
         
     </div>
     
+    <!-- 성공 메시지 팝업 -->
+    {% if success %}
+    <div class="overlay" id="overlay"></div>
+    <div class="success-popup" id="successPopup">
+        <h3>🙏 기도제목 등록 완료!</h3>
+        <p>기도제목이 성공적으로 등록되었습니다.<br>감사합니다!</p>
+        <button onclick="closeSuccessPopup()">확인</button>
+    </div>
+    {% endif %}
+
     <!-- 버전 정보 -->
     <div class="version-info">v1.0</div>
+
+    <script>
+        function closeSuccessPopup() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('successPopup').style.display = 'none';
+            // URL에서 success 파라미터 제거
+            const url = new URL(window.location);
+            url.searchParams.delete('success');
+            window.history.replaceState({}, '', url);
+        }
+
+        // ESC 키로 팝업 닫기
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeSuccessPopup();
+            }
+        });
+
+        // 팝업 외부 클릭으로 닫기
+        document.addEventListener('click', function(event) {
+            const overlay = document.getElementById('overlay');
+            const popup = document.getElementById('successPopup');
+            if (event.target === overlay) {
+                closeSuccessPopup();
+            }
+        });
+
+        // 체크박스 상태 관리
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkbox = document.getElementById('is_private');
+            const label = checkbox.closest('.checkbox-label');
+            
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    label.classList.add('checked');
+                } else {
+                    label.classList.remove('checked');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

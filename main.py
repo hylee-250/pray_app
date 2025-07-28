@@ -57,13 +57,14 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 
 @app.get("/")
-def form_page(request: Request):
+def form_page(request: Request, success: str = Query(default=None)):
     return templates.TemplateResponse(
         "form.html",
         {
             "request": request,
             "cell_groups": list(CELL_GROUP_LEADERS.keys()),
             "cell_group_leaders": CELL_GROUP_LEADERS,
+            "success": success,
         },
     )
 
@@ -89,7 +90,7 @@ def login(request: Request, password: str = Form(...)):
             value="true",
             max_age=1800,  # 30분으로 단축
             httponly=True,
-            secure=False,  # 개발환경에서는 False, 배포 시 True로 변경
+            secure=os.getenv("ENVIRONMENT") == "production",  # 배포환경에서는 HTTPS 필요
             samesite="lax",
         )
         return response
@@ -115,6 +116,7 @@ def submit_prayer(
     leader: str = Form(...),
     cell_group: str = Form(...),
     content: str = Form(...),
+    is_private: bool = Form(default=False),
 ):
     db = SessionLocal()
     new_prayer = Prayer(
@@ -123,11 +125,12 @@ def submit_prayer(
         cell_group=cell_group,
         content=content,
         created_at=datetime.now(KST),  # ✅ 한국 시간
+        is_private=is_private,
     )
     db.add(new_prayer)
     db.commit()
     db.close()
-    return RedirectResponse("/", status_code=303)
+    return RedirectResponse("/?success=true", status_code=303)
 
 
 def get_week_range(week_offset=0):
@@ -148,6 +151,66 @@ def get_week_label(week_offset=0):
         return f"{sunday.month}월 {sunday.day}일~{saturday.day}일"
     else:
         return f"{sunday.month}월 {sunday.day}일~{saturday.month}월 {saturday.day}일"
+
+
+@app.get("/view")
+def view_prayers(
+    request: Request,
+    leader: str = Query(default=None),
+    cell_group: str = Query(default=None),
+    week_offset: int = Query(default=0),
+):
+    db = SessionLocal()
+    week_start, week_end = get_week_range(week_offset)
+    prayers = (
+        db.query(Prayer)
+        .filter(Prayer.created_at >= week_start, Prayer.created_at <= week_end)
+        .filter(Prayer.is_private == False)  # 비공개 기도제목 제외
+        .order_by(Prayer.created_at.desc())
+        .all()
+    )
+    db.close()
+
+    unique_leaders = sorted(set(str(p.leader) for p in prayers if p.leader))
+    unique_cell_groups = sorted(set(str(p.cell_group) for p in prayers if p.cell_group))
+
+    if leader:
+        prayers = [p for p in prayers if str(p.leader) == leader]
+    if cell_group:
+        prayers = [p for p in prayers if str(p.cell_group) == cell_group]
+
+    grouped = {}
+    for p in prayers:
+        cg = p.cell_group or "미지정"
+        ld = p.leader or "미지정"
+        if cg not in grouped:
+            grouped[cg] = {}
+        if ld not in grouped[cg]:
+            grouped[cg][ld] = []
+        grouped[cg][ld].append(p)
+
+    week_options = []
+    for i in range(-4, 2):
+        week_options.append(
+            {"offset": i, "label": get_week_label(i), "selected": i == week_offset}
+        )
+
+    return templates.TemplateResponse(
+        "view.html",
+        {
+            "request": request,
+            "prayers": prayers,
+            "leaders": unique_leaders,
+            "cell_groups": unique_cell_groups,
+            "selected_leader": leader,
+            "selected_cell_group": cell_group,
+            "grouped": grouped,
+            "week_options": week_options,
+            "week_offset": week_offset,
+            "current_week_label": get_week_label(week_offset),
+            "cell_group_leaders": CELL_GROUP_LEADERS,
+        },
+    )
 
 
 @app.get("/admin")
@@ -208,6 +271,84 @@ def view_all(
             "current_week_label": get_week_label(week_offset),
             "cell_group_leaders": CELL_GROUP_LEADERS,
         },
+    )
+
+
+@app.get("/export-excel-view")
+def export_excel_view(
+    request: Request,
+    leader: str = Query(default=None),
+    cell_group: str = Query(default=None),
+    week_offset: int = Query(default=0),
+):
+    db = SessionLocal()
+    week_start, week_end = get_week_range(week_offset)
+    prayers = (
+        db.query(Prayer)
+        .filter(Prayer.created_at >= week_start, Prayer.created_at <= week_end)
+        .filter(Prayer.is_private == False)  # 비공개 기도제목 제외
+        .order_by(Prayer.created_at.desc())
+        .all()
+    )
+    db.close()
+
+    if leader:
+        prayers = [p for p in prayers if str(p.leader) == leader]
+    if cell_group:
+        prayers = [p for p in prayers if str(p.cell_group) == cell_group]
+
+    grouped = {}
+    for p in prayers:
+        cg = p.cell_group or "미지정"
+        ld = p.leader or "미지정"
+        if cg not in grouped:
+            grouped[cg] = {}
+        if ld not in grouped[cg]:
+            grouped[cg][ld] = []
+        grouped[cg][ld].append(p)
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "기도제목 목록"
+
+    cell_group_font = Font(size=16, bold=True)
+    leader_font = Font(size=14, bold=True)
+    member_font = Font(size=12, bold=True)
+    content_font = Font(size=11)
+
+    week_label = get_week_label(week_offset)
+    ws.cell(row=1, column=1, value=f"기간: {week_label}")
+    ws.cell(row=1, column=1).font = Font(size=14, bold=True)
+
+    row = 3
+    for cell_group, leaders in grouped.items():
+        ws.cell(row=row, column=1, value=cell_group)
+        ws.cell(row=row, column=1).font = cell_group_font
+        row += 1
+
+        for leader, prayers in leaders.items():
+            ws.cell(row=row, column=2, value=f"{leader} 순장")
+            ws.cell(row=row, column=2).font = leader_font
+            row += 1
+
+            for p in prayers:
+                ws.cell(row=row, column=3, value=p.name)
+                ws.cell(row=row, column=3).font = member_font
+                ws.cell(row=row, column=4, value=p.content)
+                ws.cell(row=row, column=4).font = content_font
+                row += 1
+
+    os.makedirs("./static", exist_ok=True)
+    filename = (
+        f"기도제목목록_{week_label}_{datetime.now(KST).strftime('%Y%m%d_%H%M%S')}.xlsx"
+    )
+    filepath = f"./static/{filename}"
+    wb.save(filepath)
+
+    return FileResponse(
+        path=filepath,
+        filename=filename,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
 
 
@@ -315,6 +456,7 @@ def update_prayer(
     leader: str = Form(...),
     cell_group: str = Form(...),
     content: str = Form(...),
+    is_private: bool = Form(default=False),
 ):
     # 인증 체크
     if not request.cookies.get("admin_authenticated"):
@@ -329,6 +471,7 @@ def update_prayer(
     prayer.leader = leader
     prayer.cell_group = cell_group
     prayer.content = content
+    prayer.is_private = is_private
     db.commit()
     db.close()
 

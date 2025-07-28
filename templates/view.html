@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>기도제목 조회</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .header h1::after {
+            content: '🙏';
+            display: block;
+            font-size: 0.4em;
+            margin-top: 10px;
+            opacity: 0.7;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .control-group select {
+            padding: 10px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+            min-width: 150px;
+        }
+
+        .control-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .week-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .week-btn {
+            padding: 10px 15px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .week-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .week-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            color: #333;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* TOP 버튼 스타일 */
+        .top-btn {
+            position: fixed;
+            bottom: 60px;
+            right: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .top-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .top-btn.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .top-btn .arrow {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        /* 액션 버튼 컨테이너 */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 40px;
+            margin-bottom: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        /* 기도제목 블록 그림자 개선 */
+        .prayer-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .prayer-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .prayer-section {
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prayer-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+        }
+
+        .cell-group-title {
+            font-size: 2em;
+            color: white;
+            margin-bottom: 25px;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .leader-section {
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .leader-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .leader-title {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: 700;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 12px;
+            position: relative;
+        }
+
+        .leader-title::after {
+            content: '🙏';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+
+        .prayer-item {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prayer-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(102, 126, 234, 0.05) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .prayer-item:hover::before {
+            transform: translateX(100%);
+        }
+
+        .prayer-item:hover {
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+            transform: translateY(-3px);
+            border-left-color: #764ba2;
+        }
+
+        .prayer-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .prayer-content {
+            color: #555;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .prayer-date {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 10px;
+            text-align: right;
+        }
+
+        .no-prayers {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 40px;
+            font-size: 1.2em;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            min-width: 150px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #555;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .control-group select {
+                min-width: auto;
+            }
+
+            .week-selector {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .stats {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stat-item {
+                min-width: auto;
+                width: 100%;
+                max-width: 200px;
+            }
+
+            .back-btn {
+                position: static;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn">← 등록 페이지로</a>
+        
+        <div class="header">
+            <h1>기도제목 조회</h1>
+        </div>
+
+        <!-- 통계 -->
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number">{{ prayers|length }}</div>
+                <div class="stat-label">총 기도제목</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ cell_groups|length }}</div>
+                <div class="stat-label">다락방 수</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ leaders|length }}</div>
+                <div class="stat-label">순장 수</div>
+            </div>
+        </div>
+
+        <!-- 필터 컨트롤 -->
+        <div class="controls">
+            <div class="control-group">
+                <label>다락방</label>
+                <select onchange="updateUrl('cell_group', this.value)">
+                    <option value="">전체</option>
+                    {% for cg in cell_groups %}
+                        <option value="{{ cg }}" {% if selected_cell_group == cg %}selected{% endif %}>{{ cg }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>순장</label>
+                <select onchange="updateUrl('leader', this.value)">
+                    <option value="">전체</option>
+                    {% for leader in leaders %}
+                        <option value="{{ leader }}" {% if selected_leader == leader %}selected{% endif %}>{{ leader }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>주차</label>
+                <div class="week-selector">
+                    {% for week in week_options %}
+                        <a href="?week_offset={{ week.offset }}{% if selected_leader %}&leader={{ selected_leader }}{% endif %}{% if selected_cell_group %}&cell_group={{ selected_cell_group }}{% endif %}" 
+                           class="week-btn {% if week.selected %}active{% endif %}">
+                            {{ week.label }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 액션 버튼들 -->
+        {% if grouped %}
+        <div class="action-buttons">
+            <a href="/export-excel-view?week_offset={{ week_offset }}{% if selected_leader %}&leader={{ selected_leader }}{% endif %}{% if selected_cell_group %}&cell_group={{ selected_cell_group }}{% endif %}" 
+               class="action-btn export-btn">
+                📊 엑셀 다운로드
+            </a>
+            <button class="action-btn copy-btn" onclick="copyPrayersToClipboard()">
+                📋 기도제목 복사
+            </button>
+        </div>
+        {% endif %}
+
+        <!-- 기도제목 목록 -->
+        {% if grouped %}
+            {% for cell_group, leaders in grouped.items() %}
+                <div class="prayer-section">
+                    <div class="cell-group-title">{{ cell_group }}</div>
+                    
+                    {% for leader, prayers in leaders.items() %}
+                        <div class="leader-section">
+                            <div class="leader-title">{{ leader }} 순장</div>
+                            
+                            {% for prayer in prayers %}
+                                <div class="prayer-item">
+                                    <div class="prayer-name">{{ prayer.name }}</div>
+                                    <div class="prayer-content">{{ prayer.content }}</div>
+                                    <div class="prayer-date">{{ prayer.created_at.strftime('%Y년 %m월 %d일 %H:%M') }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-prayers">
+                <p>해당 조건에 맞는 기도제목이 없습니다.</p>
+                <p>다른 필터를 선택하거나 다른 주차를 확인해보세요.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- TOP 버튼 -->
+    <button class="top-btn" id="topBtn" onclick="scrollToTop()">
+        <span class="arrow">⬆️</span>
+        <span>TOP</span>
+    </button>
+
+    <script>
+        function updateUrl(param, value) {
+            const url = new URL(window.location);
+            if (value) {
+                url.searchParams.set(param, value);
+            } else {
+                url.searchParams.delete(param);
+            }
+            window.location.href = url.toString();
+        }
+
+        // TOP 버튼 표시/숨김 로직
+        window.addEventListener('scroll', function() {
+            const topBtn = document.getElementById('topBtn');
+            if (window.pageYOffset > 300) {
+                topBtn.classList.add('show');
+            } else {
+                topBtn.classList.remove('show');
+            }
+        });
+
+        // 맨 위로 스크롤 함수
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // 기도제목 복사 함수
+        function copyPrayersToClipboard() {
+                             const text = `📅 {{ current_week_label }} 기도제목\n==============================\n\n{% if grouped %}{% for cell_group, leaders in grouped.items() %}【{{ cell_group }}】\n{% for leader, prayers in leaders.items() %}• {{ leader }} 순장\n{% for prayer in prayers %}  - {{ prayer.name }}\n    {{ prayer.content.replace('\n', '\n    ') }}\n{% endfor %}{% endfor %}{% endfor %}{% endif %}`;
+            
+            console.log('복사할 텍스트:', text);
+            
+            // 텍스트 영역을 통한 복사
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('기도제목이 클립보드에 복사되었습니다!');
+        }
+    </script>
+</body>
+</html> 

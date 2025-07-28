@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -26,3 +26,4 @@ class Prayer(Base):
     cell_group = Column(String)  # 다락방/소그룹
     content = Column(String)
     created_at = Column(DateTime)
+    is_private = Column(Boolean, default=False)  # 비공개 여부

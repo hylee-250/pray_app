@@ -486,18 +486,28 @@
 
     </div>
 
-    <!-- 성공 메시지 팝업 -->
-    {% if success %}
-    <div class="overlay" id="overlay"></div>
-    <div class="success-popup" id="successPopup">
-        <h3>🙏 기도제목 등록 완료!</h3>
-        <p>기도제목이 성공적으로 등록되었습니다.<br>감사합니다!</p>
-        <button onclick="closeSuccessPopup()">확인</button>
-    </div>
-    {% endif %}
+            <!-- 성공 메시지 팝업 -->
+        {% if success %}
+        <div class="overlay" id="overlay"></div>
+        <div class="success-popup" id="successPopup">
+            <h3>🙏 기도제목 등록 완료!</h3>
+            <p>기도제목이 성공적으로 등록되었습니다.<br>감사합니다!</p>
+            <button onclick="closeSuccessPopup()">확인</button>
+        </div>
+        {% endif %}
+
+        <!-- 에러 메시지 팝업 -->
+        {% if request.query_params.get('error') %}
+        <div class="overlay" id="errorOverlay"></div>
+        <div class="success-popup" id="errorPopup" style="border-color: #dc3545;">
+            <h3 style="color: #dc3545;">⚠️ 등록 실패</h3>
+            <p>기도제목 등록 중 오류가 발생했습니다.<br>다시 시도해주세요.</p>
+            <button onclick="closeErrorPopup()" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">확인</button>
+        </div>
+        {% endif %}
 
     <!-- 버전 정보 -->
-    <div class="version-info">v1.0</div>
+    <div class="version-info">{{ app_version }}</div>
 
     <script>
         function closeSuccessPopup() {
@@ -506,6 +516,15 @@
             // URL에서 success 파라미터 제거
             const url = new URL(window.location);
             url.searchParams.delete('success');
+            window.history.replaceState({}, '', url);
+        }
+
+        function closeErrorPopup() {
+            document.getElementById('errorOverlay').style.display = 'none';
+            document.getElementById('errorPopup').style.display = 'none';
+            // URL에서 error 파라미터 제거
+            const url = new URL(window.location);
+            url.searchParams.delete('error');
             window.history.replaceState({}, '', url);
         }
 

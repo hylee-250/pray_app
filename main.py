@@ -14,6 +14,8 @@ import pytz  # ✅ 추가
 from dotenv import load_dotenv
 from fastapi import HTTPException, status
 from version import get_version, get_build_info  # 버전 정보 import
+import time  # 캐싱용
+from typing import Optional  # 타입 힌트용
 
 # .env 파일 로드 (개발환경에서만)
 load_dotenv()
@@ -23,6 +25,13 @@ KST = pytz.timezone("Asia/Seoul")
 
 # ✅ FastAPI 앱 인스턴스 생성
 app = FastAPI()
+
+# 📦 캐싱을 위한 간단한 메모리 저장소
+view_cache = {
+    "data": None,
+    "timestamp": 0,
+    "ttl": 30  # 30초 캐싱
+}
 
 # ✅ Static 파일 설정
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -66,6 +75,7 @@ def form_page(request: Request, success: str = Query(default=None)):
             "cell_groups": list(CELL_GROUP_LEADERS.keys()),
             "cell_group_leaders": CELL_GROUP_LEADERS,
             "success": success,
+            "app_version": get_version(),  # 버전 정보 추가
         },
     )
 
@@ -77,6 +87,7 @@ def login_page(request: Request, error: str = None):
         {
             "request": request,
             "error": error,
+            "app_version": get_version(),  # 버전 정보 추가
         },
     )
 
@@ -116,6 +127,31 @@ def get_app_version():
     return get_build_info()
 
 
+@app.get("/api/health")
+def health_check():
+    """UptimeRobot용 헬스체크 엔드포인트 - Cold Start 방지"""
+    try:
+        # 간단한 DB 연결 테스트
+        db = SessionLocal()
+        db.execute("SELECT 1")
+        db.close()
+        
+        return {
+            "status": "healthy",
+            "timestamp": datetime.now(KST).isoformat(),
+            "version": get_version(),
+            "database": "connected"
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "timestamp": datetime.now(KST).isoformat(),
+            "version": get_version(),
+            "database": "disconnected",
+            "error": str(e)
+        }
+
+
 @app.post("/submit")
 def submit_prayer(
     request: Request,
@@ -125,19 +161,35 @@ def submit_prayer(
     content: str = Form(...),
     is_private: bool = Form(default=False),
 ):
-    db = SessionLocal()
-    new_prayer = Prayer(
-        name=name,
-        leader=leader,
-        cell_group=cell_group,
-        content=content,
-        created_at=datetime.now(KST),  # ✅ 한국 시간
-        is_private=is_private,
-    )
-    db.add(new_prayer)
-    db.commit()
-    db.close()
-    return RedirectResponse("/?success=true", status_code=303)
+    try:
+        db = SessionLocal()
+        new_prayer = Prayer(
+            name=name,
+            leader=leader,
+            cell_group=cell_group,
+            content=content,
+            created_at=datetime.now(KST),  # ✅ 한국 시간
+            is_private=is_private,
+        )
+        db.add(new_prayer)
+        db.commit()
+        db.close()
+        
+        # 📦 캐시 무효화 - 새 기도제목이 등록되면 캐시 삭제
+        view_cache.clear()
+        view_cache.update({
+            "data": None,
+            "timestamp": 0,
+            "ttl": 30
+        })
+        
+        return RedirectResponse("/?success=true", status_code=303)
+    except Exception as e:
+        if 'db' in locals():
+            db.rollback()
+            db.close()
+        # 에러 발생 시 에러 페이지로 리다이렉트하는 대신 간단히 재시도 요청
+        return RedirectResponse("/?error=true", status_code=303)
 
 
 def get_week_range(week_offset=0):
@@ -166,13 +218,17 @@ def get_week_label(week_offset=0):
         return f"{sunday.month}월 {sunday.day}일~{saturday.month}월 {saturday.day}일"
 
 
-@app.get("/view")
-def view_prayers(
-    request: Request,
-    leader: str = Query(default=None),
-    cell_group: str = Query(default=None),
-    week_offset: int = Query(default=0),
-):
+def get_cached_prayers_data(week_offset=0):
+    """캐싱된 기도제목 데이터를 반환합니다 (30초 캐싱)"""
+    current_time = time.time()
+    cache_key = f"prayers_{week_offset}"
+    
+    # 캐시 확인
+    if (view_cache.get(cache_key) and 
+        current_time - view_cache.get(f"{cache_key}_time", 0) < view_cache["ttl"]):
+        return view_cache[cache_key]
+    
+    # 캐시 만료 또는 없음 - 새로 조회
     db = SessionLocal()
     week_start, week_end = get_week_range(week_offset)
     prayers = (
@@ -192,6 +248,43 @@ def view_prayers(
         elif prayer.created_at.tzinfo != KST:
             # 이미 timezone이 있는 경우 KST로 변환
             prayer.created_at = prayer.created_at.astimezone(KST)
+    
+    # 캐시에 저장
+    view_cache[cache_key] = prayers
+    view_cache[f"{cache_key}_time"] = current_time
+    
+    return prayers
+
+
+@app.get("/view")
+def view_prayers(
+    request: Request,
+    leader: str = Query(default=None),
+    cell_group: str = Query(default=None),
+    week_offset: int = Query(default=0),
+):
+    # 캐싱된 데이터 사용 (필터링이 없는 경우만)
+    if not leader and not cell_group:
+        prayers = get_cached_prayers_data(week_offset)
+    else:
+        # 필터링이 있는 경우 실시간 조회
+        db = SessionLocal()
+        week_start, week_end = get_week_range(week_offset)
+        prayers = (
+            db.query(Prayer)
+            .filter(Prayer.created_at >= week_start, Prayer.created_at <= week_end)
+            .filter(Prayer.is_private.is_(False))
+            .order_by(Prayer.created_at.desc())
+            .all()
+        )
+        db.close()
+
+        # 시간대 변환
+        for prayer in prayers:
+            if prayer.created_at.tzinfo is None:
+                prayer.created_at = pytz.UTC.localize(prayer.created_at).astimezone(KST)
+            elif prayer.created_at.tzinfo != KST:
+                prayer.created_at = prayer.created_at.astimezone(KST)
 
     unique_leaders = sorted(set(str(p.leader) for p in prayers if p.leader))
     unique_cell_groups = sorted(set(str(p.cell_group) for p in prayers if p.cell_group))

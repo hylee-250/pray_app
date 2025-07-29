@@ -260,6 +260,12 @@
             color: #555;
             line-height: 1.6;
             white-space: pre-wrap;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
         }
 
         .prayer-date {
@@ -659,15 +665,15 @@
 
             .prayer-content-text {
                 font-size: 1em;
-                line-height: 1.7;
+                line-height: 1.6; /* 줄 간격 조정 */
                 color: #444;
                 white-space: pre-wrap;
                 word-break: keep-all;
                 overflow-wrap: break-word;
-                margin-bottom: 12px;
-                padding: 12px;
+                margin-bottom: 8px; /* 아래 마진 줄임 */
+                padding: 8px 10px; /* 패딩 줄임 */
                 background: rgba(255, 255, 255, 0.7);
-                border-radius: 8px;
+                border-radius: 6px;
                 border-left: 3px solid #667eea;
                 -webkit-user-select: text;
                 -moz-user-select: text;
@@ -813,7 +819,9 @@
             }
 
             .prayer-content-text {
-                font-size: 1.2em;
+                font-size: 0.95em;
+                padding: 6px 8px; /* 패딩 최소화 */
+                line-height: 1.5;
             }
 
 

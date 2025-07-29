@@ -13,6 +13,7 @@ import os
 import pytz  # ✅ 추가
 from dotenv import load_dotenv
 from fastapi import HTTPException, status
+from version import get_version, get_build_info  # 버전 정보 import
 
 # .env 파일 로드 (개발환경에서만)
 load_dotenv()
@@ -109,6 +110,12 @@ def get_leaders_by_cell_group(cell_group: str):
     return {"leaders": CELL_GROUP_LEADERS.get(cell_group, [])}
 
 
+@app.get("/api/version")
+def get_app_version():
+    """앱 버전 정보를 반환합니다."""
+    return get_build_info()
+
+
 @app.post("/submit")
 def submit_prayer(
     request: Request,
@@ -177,6 +184,15 @@ def view_prayers(
     )
     db.close()
 
+    # 시간대 변환 - 각 기도제목의 시간을 KST로 변환
+    for prayer in prayers:
+        if prayer.created_at.tzinfo is None:
+            # naive datetime인 경우 UTC로 가정하고 KST로 변환
+            prayer.created_at = pytz.UTC.localize(prayer.created_at).astimezone(KST)
+        elif prayer.created_at.tzinfo != KST:
+            # 이미 timezone이 있는 경우 KST로 변환
+            prayer.created_at = prayer.created_at.astimezone(KST)
+
     unique_leaders = sorted(set(str(p.leader) for p in prayers if p.leader))
     unique_cell_groups = sorted(set(str(p.cell_group) for p in prayers if p.cell_group))
 
@@ -215,6 +231,7 @@ def view_prayers(
             "week_offset": week_offset,
             "current_week_label": get_week_label(week_offset),
             "cell_group_leaders": CELL_GROUP_LEADERS,
+            "app_version": get_version(),  # 버전 정보 추가
         },
     )
 
@@ -238,6 +255,15 @@ def view_all(
         .all()
     )
     db.close()
+
+    # 시간대 변환 - 각 기도제목의 시간을 KST로 변환
+    for prayer in prayers:
+        if prayer.created_at.tzinfo is None:
+            # naive datetime인 경우 UTC로 가정하고 KST로 변환
+            prayer.created_at = pytz.UTC.localize(prayer.created_at).astimezone(KST)
+        elif prayer.created_at.tzinfo != KST:
+            # 이미 timezone이 있는 경우 KST로 변환
+            prayer.created_at = prayer.created_at.astimezone(KST)
 
     unique_leaders = sorted(set(str(p.leader) for p in prayers if p.leader))
     unique_cell_groups = sorted(set(str(p.cell_group) for p in prayers if p.cell_group))
@@ -276,6 +302,7 @@ def view_all(
             "week_options": week_options,
             "current_week_label": get_week_label(week_offset),
             "cell_group_leaders": CELL_GROUP_LEADERS,
+            "app_version": get_version(),  # 버전 정보 추가
         },
     )
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>기도제목 등록</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -396,33 +397,35 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>기도제목 등록</h2>
-        
+
         <!-- 헤더 이미지 추가 -->
         <div class="header-image">
-            <img src="/static/images/DreamPlus3.png" alt="기도제목 등록" class="header-img" onerror="this.style.display='none'">
+            <img src="/static/images/DreamPlus3.png" alt="기도제목 등록" class="header-img"
+                onerror="this.style.display='none'">
         </div>
-        
+
         <!-- Jinja2 변수를 JavaScript에서 사용하기 위한 숨겨진 데이터 -->
         <script>
             const cellGroupLeaders = {{ cell_group_leaders | tojson }};
         </script>
-        
+
         <script>
             function updateLeaders() {
                 const cellGroupSelect = document.getElementById('cell_group');
                 const leaderSelect = document.getElementById('leader');
                 const selectedCellGroup = cellGroupSelect.value;
-                
+
                 // 기존 옵션 제거
                 leaderSelect.innerHTML = '<option value="">선택</option>';
-                
+
                 if (selectedCellGroup) {
                     // 선택된 다락방의 순장들만 추가
                     const leaders = cellGroupLeaders[selectedCellGroup] || [];
-                    
+
                     leaders.forEach(leader => {
                         const option = document.createElement('option');
                         option.value = leader;
@@ -432,25 +435,25 @@
                 }
             }
         </script>
-        
-<form method="post" action="/submit">
+
+        <form method="post" action="/submit">
             <div class="form-group">
                 <label for="name">이름</label>
                 <input type="text" name="name" id="name" required placeholder="이름을 입력하세요">
             </div>
-            
+
             <div class="form-group">
                 <label for="cell_group">다락방</label>
                 <div class="select-wrapper">
                     <select name="cell_group" id="cell_group" onchange="updateLeaders()" required>
                         <option value="">다락방을 선택하세요</option>
                         {% for cg in cell_groups %}
-                            <option value="{{ cg }}">{{ cg }}</option>
+                        <option value="{{ cg }}">{{ cg }}</option>
                         {% endfor %}
                     </select>
                 </div>
             </div>
-            
+
             <div class="form-group">
                 <label for="leader">순장</label>
                 <div class="select-wrapper">
@@ -459,29 +462,30 @@
                     </select>
                 </div>
             </div>
-            
-                                                <div class="form-group">
+
+            <div class="form-group">
                 <label for="content">기도제목</label>
-                <textarea name="content" id="content" required placeholder="기도제목을 입력하세요&#10;엔터를 눌러 줄바꿈을 할 수 있습니다"></textarea>
+                <textarea name="content" id="content" required
+                    placeholder="기도제목을 입력하세요&#10;엔터를 눌러 줄바꿈을 할 수 있습니다"></textarea>
             </div>
-            
+
             <div class="form-group checkbox-group">
                 <label class="checkbox-label">
                     <input type="checkbox" name="is_private" id="is_private" value="true">
                     <span>🔒 비공개로 등록 (관리자만 볼 수 있음)</span>
                 </label>
             </div>
-            
+
             <button type="submit" class="submit-btn">기도제목 등록하기</button>
         </form>
-        
+
         <!-- 조회 페이지 버튼 -->
         <div class="view-btn-container">
             <a href="/view" class="view-btn">📋 기도제목 조회하기</a>
         </div>
-        
+
     </div>
-    
+
     <!-- 성공 메시지 팝업 -->
     {% if success %}
     <div class="overlay" id="overlay"></div>
@@ -506,14 +510,14 @@
         }
 
         // ESC 키로 팝업 닫기
-        document.addEventListener('keydown', function(event) {
+        document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {
                 closeSuccessPopup();
             }
         });
 
         // 팝업 외부 클릭으로 닫기
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             const overlay = document.getElementById('overlay');
             const popup = document.getElementById('successPopup');
             if (event.target === overlay) {
@@ -522,11 +526,11 @@
         });
 
         // 체크박스 상태 관리
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const checkbox = document.getElementById('is_private');
             const label = checkbox.closest('.checkbox-label');
-            
-            checkbox.addEventListener('change', function() {
+
+            checkbox.addEventListener('change', function () {
                 if (this.checked) {
                     label.classList.add('checked');
                 } else {
@@ -536,4 +540,5 @@
         });
     </script>
 </body>
+
 </html>

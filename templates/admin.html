@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>기도제목 목록</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,6 +44,24 @@
             font-size: 1.3em;
             opacity: 0.9;
             font-weight: 300;
+        }
+
+        /* 버전 정보 스타일 */
+        .version-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            color: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 999;
+            pointer-events: none;
+            user-select: none;
         }
 
 
@@ -95,7 +114,8 @@
             justify-content: center;
         }
 
-        .export-btn, .copy-btn {
+        .export-btn,
+        .copy-btn {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
             border: none;
@@ -110,7 +130,8 @@
             max-width: 250px;
         }
 
-        .export-btn:hover, .copy-btn:hover {
+        .export-btn:hover,
+        .copy-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 15px rgba(40, 167, 69, 0.3);
         }
@@ -194,7 +215,8 @@
             margin-left: 15px;
         }
 
-        .edit-btn, .delete-btn {
+        .edit-btn,
+        .delete-btn {
             border: none;
             padding: 8px 12px;
             border-radius: 6px;
@@ -214,7 +236,8 @@
             color: white;
         }
 
-        .edit-btn:hover, .delete-btn:hover {
+        .edit-btn:hover,
+        .delete-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
@@ -397,7 +420,8 @@
             margin-top: 25px;
         }
 
-        .btn-cancel, .btn-save {
+        .btn-cancel,
+        .btn-save {
             padding: 12px 25px;
             border: none;
             border-radius: 8px;
@@ -416,7 +440,8 @@
             color: white;
         }
 
-        .btn-cancel:hover, .btn-save:hover {
+        .btn-cancel:hover,
+        .btn-save:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
@@ -486,14 +511,16 @@
 
         @media (max-width: 768px) {
             body {
-                padding: 5px; /* 외부 패딩 줄임 */
+                padding: 5px;
+                /* 외부 패딩 줄임 */
             }
 
             .container {
                 margin: 0;
                 border-radius: 10px;
                 max-width: 100%;
-                padding: 10px; /* 컨테이너 패딩 줄임 */
+                padding: 10px;
+                /* 컨테이너 패딩 줄임 */
             }
 
             .header {
@@ -526,7 +553,8 @@
 
             .filter-group select {
                 padding: 12px;
-                font-size: 16px; /* iOS 줌 방지 */
+                font-size: 16px;
+                /* iOS 줌 방지 */
                 margin-bottom: 0;
                 border-radius: 8px;
                 border: 2px solid #e1e5e9;
@@ -539,7 +567,8 @@
                 margin-top: 15px;
             }
 
-            .export-btn, .copy-btn {
+            .export-btn,
+            .copy-btn {
                 margin: 0;
                 padding: 15px 20px;
                 font-size: 1em;
@@ -549,14 +578,17 @@
             }
 
             .content {
-                padding: 10px; /* 콘텐츠 패딩 줄임 */
+                padding: 10px;
+                /* 콘텐츠 패딩 줄임 */
             }
 
             /* 기도제목 카드 모바일 최적화 - 패딩 최소화 */
             .prayer-item {
                 flex-direction: column;
-                padding: 12px 10px; /* 기도제목 패딩 줄임 */
-                margin-bottom: 10px; /* 간격 줄임 */
+                padding: 12px 10px;
+                /* 기도제목 패딩 줄임 */
+                margin-bottom: 10px;
+                /* 간격 줄임 */
                 border-radius: 8px;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             }
@@ -609,7 +641,8 @@
                 flex-wrap: wrap;
             }
 
-            .edit-btn, .delete-btn {
+            .edit-btn,
+            .delete-btn {
                 flex: 1;
                 min-width: 80px;
                 padding: 8px 12px;
@@ -619,12 +652,14 @@
 
             .cell-group-title {
                 font-size: 1.4em;
-                margin-bottom: 12px; /* 제목 아래 간격 줄임 */
+                margin-bottom: 12px;
+                /* 제목 아래 간격 줄임 */
             }
 
             .leader-title {
                 font-size: 1.15em;
-                margin-bottom: 10px; /* 순장 제목 아래 간격 줄임 */
+                margin-bottom: 10px;
+                /* 순장 제목 아래 간격 줄임 */
                 padding-bottom: 5px;
             }
 
@@ -669,7 +704,8 @@
                 gap: 10px;
             }
 
-            .btn-cancel, .btn-save {
+            .btn-cancel,
+            .btn-save {
                 padding: 15px;
                 font-size: 1.1em;
             }
@@ -695,7 +731,8 @@
                 gap: 10px;
             }
 
-            .export-btn, .copy-btn {
+            .export-btn,
+            .copy-btn {
                 padding: 18px 30px;
                 font-size: 1.2em;
                 min-width: auto;
@@ -726,6 +763,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -735,7 +773,8 @@
 
         <!-- 헤더 이미지 추가 -->
         <div class="header-image">
-            <img src="/static/images/DreamPlus3.png" alt="기도제목 관리" class="header-img" onerror="this.style.display='none'">
+            <img src="/static/images/DreamPlus3.png" alt="기도제목 관리" class="header-img"
+                onerror="this.style.display='none'">
         </div>
 
         <div class="filters">
@@ -744,31 +783,32 @@
                     <label for="week_offset">주차:</label>
                     <select name="week_offset" onchange="this.form.submit()">
                         {% for week in week_options %}
-                            <option value="{{ week.offset }}" {% if week.selected %}selected{% endif %}>{{ week.label }}</option>
+                        <option value="{{ week.offset }}" {% if week.selected %}selected{% endif %}>{{ week.label }}
+                        </option>
                         {% endfor %}
                     </select>
                 </div>
-                
+
                 <div class="filter-group">
                     <label for="cell_group">다락방:</label>
                     <select name="cell_group" onchange="this.form.submit()">
                         <option value="">전체 보기</option>
                         {% for cg in cell_groups %}
-                            <option value="{{ cg }}" {% if selected_cell_group == cg %}selected{% endif %}>{{ cg }}</option>
+                        <option value="{{ cg }}" {% if selected_cell_group==cg %}selected{% endif %}>{{ cg }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                
+
                 <div class="filter-group">
                     <label for="leader">순장:</label>
-    <select name="leader" onchange="this.form.submit()">
-      <option value="">전체 보기</option>
-      {% for l in leaders %}
-        <option value="{{ l }}" {% if selected_leader == l %}selected{% endif %}>{{ l }}</option>
-      {% endfor %}
-    </select>
+                    <select name="leader" onchange="this.form.submit()">
+                        <option value="">전체 보기</option>
+                        {% for l in leaders %}
+                        <option value="{{ l }}" {% if selected_leader==l %}selected{% endif %}>{{ l }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                
+
                 <div class="button-container">
                     <button type="button" onclick="exportToExcel()" class="export-btn">📊 엑셀 다운로드</button>
                     <button type="button" onclick="copyPrayersByLeader()" class="copy-btn">📋 기도제목 복사</button>
@@ -793,7 +833,7 @@
                             <select id="editCellGroup" onchange="updateEditLeaders()" required>
                                 <option value="">선택</option>
                                 {% for cg in cell_groups %}
-                                    <option value="{{ cg }}">{{ cg }}</option>
+                                <option value="{{ cg }}">{{ cg }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -805,7 +845,8 @@
                         </div>
                         <div class="form-group">
                             <label for="editContent">기도제목</label>
-                            <textarea id="editContent" required placeholder="기도제목을 입력하세요&#10;엔터를 눌러 줄바꿈을 할 수 있습니다"></textarea>
+                            <textarea id="editContent" required
+                                placeholder="기도제목을 입력하세요&#10;엔터를 눌러 줄바꿈을 할 수 있습니다"></textarea>
                         </div>
                         <div class="form-group checkbox-group">
                             <label class="checkbox-label">
@@ -817,24 +858,24 @@
                             <button type="button" class="btn-cancel" onclick="closeModal()">취소</button>
                             <button type="submit" class="btn-save">저장</button>
                         </div>
-  </form>
+                    </form>
                 </div>
             </div>
 
             <script>
                 const cellGroupLeaders = {{ cell_group_leaders | tojson }};
-                
+
                 function exportToExcel() {
                     const urlParams = new URLSearchParams(window.location.search);
                     const leader = urlParams.get('leader') || '';
                     const cell_group = urlParams.get('cell_group') || '';
                     const week_offset = urlParams.get('week_offset') || '0';
-                    
+
                     let exportUrl = '/export-excel?';
                     if (leader) exportUrl += `leader=${encodeURIComponent(leader)}&`;
                     if (cell_group) exportUrl += `cell_group=${encodeURIComponent(cell_group)}&`;
                     exportUrl += `week_offset=${week_offset}`;
-                    
+
                     window.location.href = exportUrl;
                 }
 
@@ -843,31 +884,31 @@
                         // 현재 필터링된 기도제목들을 다락방-순장-순원별로 정리
                         const cellGroupTitles = document.querySelectorAll('.cell-group-title');
                         const prayersByStructure = {};
-                        
+
                         if (cellGroupTitles.length === 0) {
                             alert('복사할 기도제목이 없습니다.');
                             return;
                         }
-                        
+
                         // 다락방별로 순장과 순원 정보 수집
                         cellGroupTitles.forEach(cellGroupTitle => {
                             const cellGroupName = cellGroupTitle.textContent.trim();
                             prayersByStructure[cellGroupName] = {};
-                            
+
                             // 현재 다락방의 다음 요소들에서 순장 정보 찾기
                             let currentElement = cellGroupTitle.nextElementSibling;
                             while (currentElement && !currentElement.classList.contains('cell-group-title')) {
                                 if (currentElement.classList.contains('leader-title')) {
                                     const leaderName = currentElement.textContent.replace(' 순장', '').trim();
                                     prayersByStructure[cellGroupName][leaderName] = [];
-                                    
+
                                     // 현재 순장의 다음 요소들에서 순원 정보 찾기
                                     let prayerElement = currentElement.nextElementSibling;
                                     while (prayerElement && !prayerElement.classList.contains('leader-title') && !prayerElement.classList.contains('cell-group-title')) {
                                         if (prayerElement.classList.contains('prayer-item')) {
                                             const memberNameElement = prayerElement.querySelector('.member-name');
                                             const prayerText = prayerElement.querySelector('.prayer-text')?.textContent || '';
-                                            
+
                                             // 이름에서 비공개 아이콘 제거
                                             let memberName = '';
                                             if (memberNameElement) {
@@ -879,12 +920,12 @@
                                                 }
                                                 memberName = clonedElement.textContent.trim();
                                             }
-                                            
+
                                             if (memberName && prayerText) {
                                                 // 비공개 기도제목인지 확인
                                                 const isPrivate = prayerElement.classList.contains('private-prayer');
                                                 const finalContent = isPrivate ? `🔒 ${prayerText}` : prayerText;
-                                                
+
                                                 prayersByStructure[cellGroupName][leaderName].push({
                                                     name: memberName,
                                                     content: finalContent
@@ -897,16 +938,16 @@
                                 currentElement = currentElement.nextElementSibling;
                             }
                         });
-                        
+
                         // 텍스트 형태로 변환 (다락방-순장-순원 구조)
                         let textToCopy = '';
                         for (const [cellGroup, leaders] of Object.entries(prayersByStructure)) {
                             textToCopy += `=== ${cellGroup} ===\n`;
-                            
+
                             for (const [leader, prayers] of Object.entries(leaders)) {
                                 if (prayers.length > 0) {
                                     textToCopy += `${leader} 순장\n`;
-                                    
+
                                     prayers.forEach((prayer, index) => {
                                         textToCopy += `${prayer.name}\n`;
                                         textToCopy += `${prayer.content}\n`;
@@ -915,12 +956,12 @@
                                 }
                             }
                         }
-                        
+
                         if (textToCopy.trim() === '') {
                             alert('복사할 기도제목이 없습니다.');
                             return;
                         }
-                        
+
                         // 클립보드에 복사 (최신 브라우저)
                         if (navigator.clipboard && window.isSecureContext) {
                             navigator.clipboard.writeText(textToCopy).then(() => {
@@ -938,7 +979,7 @@
                         alert('복사 중 오류가 발생했습니다. 다시 시도해주세요.');
                     }
                 }
-                
+
                 function fallbackCopyTextToClipboard(text) {
                     try {
                         const textArea = document.createElement('textarea');
@@ -951,7 +992,7 @@
                         textArea.select();
                         const successful = document.execCommand('copy');
                         document.body.removeChild(textArea);
-                        
+
                         if (successful) {
                             alert('순장별 기도제목이 클립보드에 복사되었습니다!');
                         } else {
@@ -968,26 +1009,26 @@
                         fetch(`/prayer/${prayerId}`, {
                             method: 'DELETE',
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message) {
-                                alert('기도제목이 삭제되었습니다.');
-                                location.reload();
-                            } else {
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.message) {
+                                    alert('기도제목이 삭제되었습니다.');
+                                    location.reload();
+                                } else {
+                                    alert('삭제 중 오류가 발생했습니다.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
                                 alert('삭제 중 오류가 발생했습니다.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('삭제 중 오류가 발생했습니다.');
-                        });
+                            });
                     }
                 }
 
                 function editPrayerFromData(button) {
                     // 모바일에서 스크롤 방지
                     document.body.style.overflow = 'hidden';
-                    
+
                     // 데이터 속성에서 값 가져오기
                     const prayerId = button.getAttribute('data-prayer-id');
                     const name = button.getAttribute('data-name');
@@ -995,7 +1036,7 @@
                     const cellGroup = button.getAttribute('data-cell-group');
                     const content = button.getAttribute('data-content');
                     const isPrivate = button.getAttribute('data-is-private') === 'True';
-                    
+
                     // 폼 요소들 가져오기
                     const editPrayerId = document.getElementById('editPrayerId');
                     const editName = document.getElementById('editName');
@@ -1003,7 +1044,7 @@
                     const editContent = document.getElementById('editContent');
                     const editLeader = document.getElementById('editLeader');
                     const editIsPrivate = document.getElementById('editIsPrivate');
-                    
+
                     // 값 설정
                     if (editPrayerId) editPrayerId.value = prayerId;
                     if (editName) editName.value = name;
@@ -1021,18 +1062,18 @@
                             }
                         }
                     }
-                    
+
                     // 순장 옵션 업데이트
                     updateEditLeaders();
                     if (editLeader) editLeader.value = leader;
-                    
+
                     // 모달 표시
                     const modal = document.getElementById('editModal');
                     if (modal) {
                         modal.style.display = 'block';
                         // 모바일에서 모달이 제대로 표시되도록 강제 리페인트
                         modal.offsetHeight;
-                        
+
                         // 모바일에서 모달이 화면 중앙에 오도록
                         modal.scrollTop = 0;
                     }
@@ -1041,7 +1082,7 @@
                 function editPrayer(prayerId, name, leader, cellGroup, content) {
                     // 기존 함수 유지 (호환성)
                     editPrayerFromData({
-                        getAttribute: function(attr) {
+                        getAttribute: function (attr) {
                             if (attr === 'data-prayer-id') return prayerId;
                             if (attr === 'data-name') return name;
                             if (attr === 'data-leader') return leader;
@@ -1056,9 +1097,9 @@
                     const cellGroupSelect = document.getElementById('editCellGroup');
                     const leaderSelect = document.getElementById('editLeader');
                     const selectedCellGroup = cellGroupSelect.value;
-                    
+
                     leaderSelect.innerHTML = '<option value="">선택</option>';
-                    
+
                     if (selectedCellGroup) {
                         const leaders = cellGroupLeaders[selectedCellGroup] || [];
                         leaders.forEach(leader => {
@@ -1077,7 +1118,7 @@
                 }
 
                 // 모달 외부 클릭 시 닫기 (터치 이벤트 포함)
-                window.onclick = function(event) {
+                window.onclick = function (event) {
                     const modal = document.getElementById('editModal');
                     if (event.target == modal) {
                         closeModal();
@@ -1085,7 +1126,7 @@
                 }
 
                 // 터치 이벤트 지원
-                window.ontouchstart = function(event) {
+                window.ontouchstart = function (event) {
                     const modal = document.getElementById('editModal');
                     if (event.target == modal) {
                         closeModal();
@@ -1093,12 +1134,12 @@
                 }
 
                 // 체크박스 상태 관리
-                document.addEventListener('DOMContentLoaded', function() {
+                document.addEventListener('DOMContentLoaded', function () {
                     const checkbox = document.getElementById('editIsPrivate');
                     if (checkbox) {
                         const label = checkbox.closest('.checkbox-label');
-                        
-                        checkbox.addEventListener('change', function() {
+
+                        checkbox.addEventListener('change', function () {
                             if (label) {
                                 if (this.checked) {
                                     label.classList.add('checked');
@@ -1111,59 +1152,59 @@
                 });
 
                 // 수정 폼 제출 (모바일 최적화)
-                document.addEventListener('DOMContentLoaded', function() {
+                document.addEventListener('DOMContentLoaded', function () {
                     const editForm = document.getElementById('editForm');
                     if (editForm) {
-                        editForm.addEventListener('submit', function(e) {
+                        editForm.addEventListener('submit', function (e) {
                             e.preventDefault();
-                            
+
                             // 폼 데이터 수집
                             const prayerId = document.getElementById('editPrayerId')?.value;
                             const name = document.getElementById('editName')?.value;
                             const leader = document.getElementById('editLeader')?.value;
                             const cellGroup = document.getElementById('editCellGroup')?.value;
                             const content = document.getElementById('editContent')?.value;
-                            
+
                             // 유효성 검사
                             if (!prayerId || !name || !leader || !cellGroup || !content) {
                                 alert('모든 필드를 입력해주세요.');
                                 return;
                             }
-                            
+
                             const formData = new FormData();
                             formData.append('name', name);
                             formData.append('leader', leader);
                             formData.append('cell_group', cellGroup);
                             formData.append('content', content);
-                            
+
                             // 비공개 상태 추가
                             const isPrivate = document.getElementById('editIsPrivate')?.checked || false;
                             formData.append('is_private', isPrivate);
-                            
+
                             // 수정 요청
                             fetch(`/prayer/${prayerId}`, {
                                 method: 'PUT',
                                 body: formData
                             })
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Network response was not ok');
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                if (data.message) {
-                                    alert('기도제목이 수정되었습니다.');
-                                    closeModal();
-                                    location.reload();
-                                } else {
-                                    alert('수정 중 오류가 발생했습니다.');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                alert('수정 중 오류가 발생했습니다. 다시 시도해주세요.');
-                            });
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.message) {
+                                        alert('기도제목이 수정되었습니다.');
+                                        closeModal();
+                                        location.reload();
+                                    } else {
+                                        alert('수정 중 오류가 발생했습니다.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    alert('수정 중 오류가 발생했습니다. 다시 시도해주세요.');
+                                });
                         });
                     }
                 });
@@ -1171,40 +1212,35 @@
 
             <!-- 🙏 기도제목 리스트 (다락방-순장-순원별 그룹핑) -->
             {% for cell_group, leaders in grouped.items() %}
-                <div class="cell-group-title">{{ cell_group }}</div>
-                {% for leader, prayers in leaders.items() %}
-                    <div class="leader-title">{{ leader }} 순장</div>
-                        {% for p in prayers %}
-                        <div class="prayer-item {% if p.is_private %}private-prayer{% endif %}">
-                            <div class="prayer-content">
-                                <div class="member-name">
-                                    {{ p.name }}
-                                    {% if p.is_private %}
-                                        <span class="private-badge">🔒</span>
-                                    {% endif %}
-                                </div>
-                                <div class="prayer-text">{{ p.content | replace('\n', '<br>') | safe }}</div>
-                            </div>
-                            <div class="action-buttons">
-                                <button class="edit-btn" 
-                                    data-prayer-id="{{ p.id }}"
-                                    data-name="{{ p.name }}"
-                                    data-leader="{{ p.leader }}"
-                                    data-cell-group="{{ p.cell_group }}"
-                                    data-content="{{ p.content }}"
-                                    data-is-private="{{ p.is_private }}"
-                                    onclick="editPrayerFromData(this)" 
-                                    ontouchstart="editPrayerFromData(this)" 
-                                    style="touch-action: manipulation;">✏️ 수정</button>
-                                <button class="delete-btn" onclick="deletePrayer({{ p.id }})" ontouchstart="deletePrayer({{ p.id }})">🗑️ 삭제</button>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endfor %}
-    {% endfor %}
+            <div class="cell-group-title">{{ cell_group }}</div>
+            {% for leader, prayers in leaders.items() %}
+            <div class="leader-title">{{ leader }} 순장</div>
+            {% for p in prayers %}
+            <div class="prayer-item {% if p.is_private %}private-prayer{% endif %}">
+                <div class="prayer-content">
+                    <div class="member-name">
+                        {{ p.name }}
+                        {% if p.is_private %}
+                        <span class="private-badge">🔒</span>
+                        {% endif %}
+                    </div>
+                    <div class="prayer-text">{{ p.content | replace('\n', '<br>') | safe }}</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="edit-btn" data-prayer-id="{{ p.id }}" data-name="{{ p.name }}"
+                        data-leader="{{ p.leader }}" data-cell-group="{{ p.cell_group }}" data-content="{{ p.content }}"
+                        data-is-private="{{ p.is_private }}" onclick="editPrayerFromData(this)"
+                        ontouchstart="editPrayerFromData(this)" style="touch-action: manipulation;">✏️ 수정</button>
+                    <button class="delete-btn" onclick="deletePrayer({{ p.id }})"
+                        ontouchstart="deletePrayer({{ p.id }})">🗑️ 삭제</button>
+                </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+            {% endfor %}
         </div>
     </div>
-    
+
     <!-- TOP 버튼 -->
     <button class="top-btn" id="topBtn" onclick="scrollToTop()">
         <span class="arrow">⬆️</span>
@@ -1212,11 +1248,11 @@
     </button>
 
     <!-- 버전 정보 -->
-    <div class="version-info">v1.0</div>
+    <div class="version-info">{{ app_version }}</div>
 
     <script>
         // TOP 버튼 표시/숨김 로직
-        window.addEventListener('scroll', function() {
+        window.addEventListener('scroll', function () {
             const topBtn = document.getElementById('topBtn');
             if (window.pageYOffset > 300) {
                 topBtn.classList.add('show');
@@ -1234,4 +1270,5 @@
         }
     </script>
 </body>
+
 </html>

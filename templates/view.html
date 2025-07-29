@@ -172,6 +172,24 @@
             font-weight: bold;
         }
 
+        /* 버전 정보 스타일 */
+        .version-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            color: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 999;
+            pointer-events: none;
+            user-select: none;
+        }
+
         /* 액션 버튼 컨테이너 */
         .action-buttons {
             display: flex;
@@ -563,6 +581,14 @@
                 -ms-user-select: text;
                 user-select: text;
             }
+
+            /* 버전 정보 모바일 최적화 */
+            .version-info {
+                top: 5px;
+                right: 5px;
+                font-size: 0.7em;
+                padding: 3px 8px;
+            }
         }
 
         /* 더 작은 화면 (iPhone SE 등) - 극한 공간 절약 */
@@ -634,6 +660,9 @@
     </style>
 </head>
 <body>
+    <!-- 버전 정보 -->
+    <div class="version-info">{{ app_version }}</div>
+    
     <div class="container">
         <a href="/" class="back-btn">← 등록 페이지로</a>
         

@@ -140,73 +140,133 @@
             padding: 30px;
         }
 
-        .cell-group-title {
-            font-size: 2em;
-            font-weight: 600;
-            color: #333;
-            margin: 30px 0 20px 0;
-            padding: 15px 0;
-            border-bottom: 3px solid #667eea;
+        /* View 페이지와 동일한 스타일 적용 */
+        .prayer-section {
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
             position: relative;
+            overflow: hidden;
         }
 
-        .cell-group-title::before {
-            content: '🏠';
-            margin-right: 10px;
+        .prayer-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+        }
+
+        .cell-group-title {
+            font-size: 2em;
+            color: white;
+            margin-bottom: 25px;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .leader-section {
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .leader-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         }
 
         .leader-title {
-            font-size: 1.4em;
-            font-weight: 600;
-            color: #555;
-            margin: 25px 0 15px 20px;
-            padding: 10px 0;
-            border-left: 4px solid #28a745;
-            padding-left: 15px;
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: 700;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 12px;
+            position: relative;
         }
 
-        .leader-title::before {
-            content: '👥';
-            margin-right: 8px;
+        .leader-title::after {
+            content: '🙏';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8em;
+            opacity: 0.7;
         }
 
         .prayer-item {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-radius: 12px;
             padding: 20px;
-            margin: 15px 0;
-            border-left: 4px solid #667eea;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
         }
 
+        .prayer-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(102, 126, 234, 0.05) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .prayer-item:hover::before {
+            transform: translateX(100%);
+        }
+
         .prayer-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+            transform: translateY(-3px);
+            border-left-color: #764ba2;
         }
 
         .prayer-content {
             flex: 1;
         }
 
-        .member-name {
-            font-size: 1.1em;
+        .prayer-name {
             font-weight: 600;
             color: #333;
             margin-bottom: 8px;
+            font-size: 1.1em;
         }
 
-        .prayer-text {
-            color: #666;
+        .prayer-content-text {
+            color: #555;
             line-height: 1.6;
-            font-size: 1em;
-            white-space: pre-line;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin-top: 8px;
+            white-space: pre-wrap;
+        }
+
+        .prayer-date {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 10px;
+            text-align: right;
         }
 
         .action-buttons {
@@ -244,7 +304,7 @@
 
         /* 비공개 기도제목 스타일 */
         .private-prayer {
-            border-left: 4px solid #ff6b6b;
+            border-left: 5px solid #ff6b6b;
             background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(255, 107, 107, 0.02) 100%);
         }
 
@@ -458,18 +518,7 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .version-info {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(102, 126, 234, 0.9);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            font-weight: 500;
-            z-index: 1000;
-        }
+
 
         /* TOP 버튼 스타일 */
         .top-btn {
@@ -598,7 +647,7 @@
                 background: linear-gradient(135deg, #fff5f5 0%, #ffe6e6 100%);
             }
 
-            .member-name {
+            .prayer-name {
                 font-size: 1.1em;
                 font-weight: 700;
                 margin-bottom: 12px;
@@ -608,7 +657,7 @@
                 overflow-wrap: break-word;
             }
 
-            .prayer-text {
+            .prayer-content-text {
                 font-size: 1em;
                 line-height: 1.7;
                 color: #444;
@@ -669,6 +718,14 @@
                 right: 20px;
                 padding: 12px 16px;
                 font-size: 0.8em;
+            }
+
+            /* 버전 정보 모바일 최적화 */
+            .version-info {
+                top: 5px;
+                right: 5px;
+                font-size: 0.7em;
+                padding: 3px 8px;
             }
 
             /* 모바일 모달 최적화 */
@@ -751,11 +808,11 @@
                 font-size: 1.1em;
             }
 
-            .member-name {
+            .prayer-name {
                 font-size: 1.3em;
             }
 
-            .prayer-text {
+            .prayer-content-text {
                 font-size: 1.2em;
             }
 
@@ -1212,31 +1269,38 @@
 
             <!-- 🙏 기도제목 리스트 (다락방-순장-순원별 그룹핑) -->
             {% for cell_group, leaders in grouped.items() %}
-            <div class="cell-group-title">{{ cell_group }}</div>
-            {% for leader, prayers in leaders.items() %}
-            <div class="leader-title">{{ leader }} 순장</div>
-            {% for p in prayers %}
-            <div class="prayer-item {% if p.is_private %}private-prayer{% endif %}">
-                <div class="prayer-content">
-                    <div class="member-name">
-                        {{ p.name }}
-                        {% if p.is_private %}
-                        <span class="private-badge">🔒</span>
-                        {% endif %}
-                    </div>
-                    <div class="prayer-text">{{ p.content | replace('\n', '<br>') | safe }}</div>
+                <div class="prayer-section">
+                    <div class="cell-group-title">{{ cell_group }}</div>
+                    
+                    {% for leader, prayers in leaders.items() %}
+                        <div class="leader-section">
+                            <div class="leader-title">{{ leader }} 순장</div>
+                            
+                            {% for p in prayers %}
+                                <div class="prayer-item {% if p.is_private %}private-prayer{% endif %}">
+                                    <div class="prayer-content">
+                                        <div class="prayer-name">
+                                            {{ p.name }}
+                                            {% if p.is_private %}
+                                            <span class="private-badge">🔒</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="prayer-content-text">{{ p.content }}</div>
+                                        <div class="prayer-date">{{ p.created_at.strftime('%Y년 %m월 %d일 %H:%M') }}</div>
+                                    </div>
+                                    <div class="action-buttons">
+                                        <button class="edit-btn" data-prayer-id="{{ p.id }}" data-name="{{ p.name }}"
+                                            data-leader="{{ p.leader }}" data-cell-group="{{ p.cell_group }}" data-content="{{ p.content }}"
+                                            data-is-private="{{ p.is_private }}" onclick="editPrayerFromData(this)"
+                                            ontouchstart="editPrayerFromData(this)" style="touch-action: manipulation;">✏️ 수정</button>
+                                        <button class="delete-btn" onclick="deletePrayer({{ p.id }})"
+                                            ontouchstart="deletePrayer({{ p.id }})">🗑️ 삭제</button>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
                 </div>
-                <div class="action-buttons">
-                    <button class="edit-btn" data-prayer-id="{{ p.id }}" data-name="{{ p.name }}"
-                        data-leader="{{ p.leader }}" data-cell-group="{{ p.cell_group }}" data-content="{{ p.content }}"
-                        data-is-private="{{ p.is_private }}" onclick="editPrayerFromData(this)"
-                        ontouchstart="editPrayerFromData(this)" style="touch-action: manipulation;">✏️ 수정</button>
-                    <button class="delete-btn" onclick="deletePrayer({{ p.id }})"
-                        ontouchstart="deletePrayer({{ p.id }})">🗑️ 삭제</button>
-                </div>
-            </div>
-            {% endfor %}
-            {% endfor %}
             {% endfor %}
         </div>
     </div>

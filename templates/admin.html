@@ -22,7 +22,7 @@
             max-width: 1200px;
             margin: 0 auto;
             background: white;
-            border-radius: 20px;
+            border-radius: 15px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
@@ -137,15 +137,15 @@
         }
 
         .content {
-            padding: 30px;
+            padding: 15px;
         }
 
         /* View 페이지와 동일한 스타일 적용 */
         .prayer-section {
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            padding: 30px;
+            border-radius: 15px;
+            padding: 20px;
             box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
             position: relative;
             overflow: hidden;
@@ -173,10 +173,10 @@
         }
 
         .leader-section {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 25px;
+            border-radius: 12px;
+            padding: 15px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -210,10 +210,10 @@
 
         .prayer-item {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 5px solid #667eea;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
             position: relative;
@@ -572,10 +572,10 @@
 
             .container {
                 margin: 0;
-                border-radius: 10px;
+                border-radius: 8px;
                 max-width: 100%;
-                padding: 10px;
-                /* 컨테이너 패딩 줄임 */
+                padding: 5px;
+                /* 컨테이너 패딩 더 줄임 */
             }
 
             .header {
@@ -633,18 +633,45 @@
             }
 
             .content {
-                padding: 10px;
-                /* 콘텐츠 패딩 줄임 */
+                padding: 5px;
+                /* 콘텐츠 패딩 더 줄임 */
+            }
+
+            /* 모바일 기도제목 최적화 - 패딩/마진 최소화 */
+            .prayer-section {
+                margin-bottom: 15px; /* 다락방 간 간격 줄임 */
+                padding: 12px 8px; /* 다락방 패딩 대폭 줄임 */
+                border-radius: 10px;
+            }
+
+            .cell-group-title {
+                font-size: 1.4em;
+                margin-bottom: 12px; /* 제목 아래 간격 줄임 */
+            }
+
+            .leader-section {
+                margin-bottom: 12px; /* 순장 간 간격 줄임 */
+                padding: 10px 8px; /* 순장 패딩 줄임 */
+                border-radius: 8px;
+            }
+
+            .leader-title {
+                font-size: 1.15em;
+                margin-bottom: 10px; /* 순장 제목 아래 간격 줄임 */
+                padding-bottom: 5px;
+            }
+
+            .leader-title::after {
+                font-size: 0.9em;
             }
 
             /* 기도제목 카드 모바일 최적화 - 패딩 최소화 */
             .prayer-item {
                 flex-direction: column;
-                padding: 12px 10px;
-                /* 기도제목 패딩 줄임 */
-                margin-bottom: 10px;
-                /* 간격 줄임 */
+                padding: 12px 10px; /* 기도제목 패딩 줄임 */
+                margin-bottom: 8px; /* 기도제목 간 간격 줄임 */
                 border-radius: 8px;
+                border-left-width: 3px;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             }
 
@@ -654,18 +681,18 @@
             }
 
             .prayer-name {
-                font-size: 1.1em;
+                font-size: 1.05em;
                 font-weight: 700;
-                margin-bottom: 12px;
+                margin-bottom: 8px; /* 이름 아래 간격 줄임 */
                 color: #333;
-                line-height: 1.4;
+                line-height: 1.3;
                 word-break: keep-all;
                 overflow-wrap: break-word;
             }
 
             .prayer-content-text {
                 font-size: 1em;
-                line-height: 1.6; /* 줄 간격 조정 */
+                line-height: 1.6; /* 줄 간격 약간 줄임 */
                 color: #444;
                 white-space: pre-wrap;
                 word-break: keep-all;
@@ -822,6 +849,14 @@
                 font-size: 0.95em;
                 padding: 6px 8px; /* 패딩 최소화 */
                 line-height: 1.5;
+            }
+
+            /* 텍스트 선택 개선 */
+            .prayer-content-text {
+                -webkit-user-select: text;
+                -moz-user-select: text;
+                -ms-user-select: text;
+                user-select: text;
             }
 
 
